@@ -3,7 +3,7 @@ body { background: var(--flannel); }
 
 .gate {
   min-height: 100svh; display: grid; place-content: center; justify-items: center; gap: 14px; padding: 24px; text-align: center; color: var(--chalk);
-  background: repeating-linear-gradient(90deg, var(--g-700) 0 7.5%, #1B3F31 7.5% 15%);
+  background: repeating-linear-gradient(90deg, var(--g-700) 0 7.5%, var(--court-stripe) 7.5% 15%);
 }
 .gate img { width: 200px; height: auto; margin-bottom: 12px; }
 .gate h1 { font-size: 2.2rem; }

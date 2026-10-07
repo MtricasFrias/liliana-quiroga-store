@@ -5,7 +5,7 @@
   position: relative; isolation: isolate; color: var(--chalk);
   min-height: clamp(660px, 100svh, 920px);
   /* franjas de corte del pasto, como en una cancha de grama */
-  background: repeating-linear-gradient(90deg, var(--g-700) 0 7.5%, #1B3F31 7.5% 15%);
+  background: repeating-linear-gradient(90deg, var(--g-700) 0 7.5%, var(--court-stripe) 7.5% 15%);
 }
 .court-lines { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; }
 .court-lines path {
@@ -109,11 +109,11 @@
 .card-price { font-size: 1.06rem; font-weight: 700; margin-top: 4px; }
 .sizes { display: flex; flex-wrap: wrap; gap: 4px; list-style: none; padding: 0; margin: 6px 0 0; }
 .sizes li { min-width: 30px; padding: 2px 6px; border: 1px solid var(--g-200); font-size: .74rem; font-weight: 600; text-align: center; color: var(--ink-2); }
-.sizes li.gone { color: var(--g-300); text-decoration: line-through; border-style: dashed; }
+.sizes li.gone { color: var(--g-400); text-decoration: line-through; border-style: dashed; }
 .col-note { margin-top: 18px; font-size: .86rem; color: var(--muted); }
 
 /* ---------- Probado en la tienda ---------- */
-.lookbook { color: var(--chalk); padding: clamp(64px, 8vw, 112px) var(--gutter); background: repeating-linear-gradient(90deg, var(--g-700) 0 7.5%, #1B3F31 7.5% 15%); }
+.lookbook { color: var(--chalk); padding: clamp(64px, 8vw, 112px) var(--gutter); background: repeating-linear-gradient(90deg, var(--g-700) 0 7.5%, var(--court-stripe) 7.5% 15%); }
 .look-head { max-width: 1480px; margin: 0 auto 40px; display: flex; justify-content: space-between; align-items: end; gap: 24px; flex-wrap: wrap; border-bottom: var(--line) solid color-mix(in srgb, var(--chalk) 80%, transparent); padding-bottom: 22px; }
 .look-head h2 { font-size: clamp(2.2rem, 4.6vw, 3.8rem); }
 .look-head p { color: var(--g-200); max-width: 36ch; }
@@ -190,7 +190,7 @@ body:has(.score:not([hidden])) .wa-float { display: none; }
 .size { min-width: 52px; height: 48px; border: 1px solid var(--g-300); border-radius: 2px; background: var(--g-0); font-weight: 600; }
 .size:hover:not(:disabled) { border-color: var(--g-700); }
 .size[aria-pressed=true] { background: var(--g-700); border-color: var(--g-700); color: var(--chalk); }
-.size:disabled { color: var(--g-300); text-decoration: line-through; border-style: dashed; background: none; cursor: not-allowed; }
+.size:disabled { color: var(--g-400); text-decoration: line-through; border-style: dashed; background: none; cursor: not-allowed; }
 .pd-stock { margin-top: 10px; font-size: .9rem; color: var(--ink-2); }
 .spec { margin: 6px 0 0; border-top: var(--line) solid var(--g-700); }
 .spec div { display: grid; grid-template-columns: 96px 1fr; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--rule); font-size: .9rem; }
