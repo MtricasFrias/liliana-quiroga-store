@@ -8,7 +8,7 @@ Vista previa del sitio de Liliana Quiroga Store, boutique multimarca en Ibagué 
 | `admin.html` | Solo los dueños (no está enlazada en la tienda) | Vender, Hoy, Inventario, Descuentos, Finanzas, Redes, Etiquetas y Ajustes. |
 | `marca.html` | Equipo y diseñadores | Kit de marca: poses del cocodrilo, logotipo, colores, tipografías e imágenes para redes. |
 
-> **Vista previa.** Los datos viven en el navegador (localStorage): cada computador o celular ve su propia copia. Trae ocho prendas de ejemplo y las finanzas en cero. Ver «Pasar a producción».
+> **Dos modos.** Mientras `js/config.js` no tenga la conexión, los datos viven en cada navegador (vista previa, con ocho prendas de ejemplo). Con la conexión a Supabase, todos los equipos comparten inventario, ventas y compras en vivo.
 
 ## Códigos de prenda
 
@@ -26,6 +26,7 @@ A001-M
 
 - **Vender:** prendas en mosaico con buscador y filtros; un toque en la prenda y otro en la talla. Al cobrar sale un **comprobante** que se envía por WhatsApp o correo, o se imprime/guarda en PDF, con los enlaces a Google Maps, Instagram y Facebook. No reemplaza la factura electrónica de la DIAN.
 - **Hoy:** lo vendido en el día (por tipo de prenda, marca y medio de pago), la ganancia y lo gastado en mercancía. Se puede consultar cualquier día.
+- **Acceso:** en vista previa con un PIN; con la base compartida, con correo y contraseña de administrador.
 - **Inventario:** unidades por talla editables, costo, precio, margen, fotos (en gancho y con modelo IA), Colección Privada y «Entrada de mercancía». Toda unidad nueva queda registrada como compra a su costo.
 - **Descuentos:** elegir prendas (o una marca o un tipo entero), porcentaje y fecha límite. Se ve tachado en la tienda y se cobra así en Vender.
 - **Finanzas:** ventas, ganancia y margen, gastado en mercancía, ticket promedio, ventas por día, por marca, por tipo y ganancia por prenda. Exporta CSV para el contador.
@@ -54,8 +55,22 @@ Luego abre `http://localhost:5500`, `http://localhost:5500/admin.html` y `http:/
 
 Está publicado con GitHub Pages desde la rama `main`. Cuando compren el dominio se configura en *Settings → Pages → Custom domain*.
 
-## Pasar a producción
+## Base de datos compartida (Supabase)
 
-1. Base de datos en la nube (Supabase o Cloudflare D1) en lugar de `load()` y `persist()` de `js/data.js`, conservando sus funciones.
-2. Inicio de sesión real del servidor en lugar del PIN de la vista previa.
-3. Fotos y precios reales, y pasarela de pago (Wompi o Mercado Pago) si quieren cobrar en línea.
+Con la base conectada, una venta registrada en el celular de la boutique agota la talla al instante en la web y en cualquier otro equipo. Dos personas no pueden vender la misma última unidad: la base revisa y descuenta el stock en un solo paso.
+
+1. Crear una cuenta gratis en [supabase.com](https://supabase.com) y un proyecto nuevo (región São Paulo). Guardar la contraseña de la base en un lugar seguro.
+2. Abrir `supabase/schema.sql`, cambiar los dos correos de la sección 1 por los de los dueños, pegarlo en **SQL Editor** y pulsar **Run**.
+3. **Authentication → Users → Add user → Create new user** con cada uno de esos correos y su contraseña (marcar *Auto Confirm User*).
+4. **Authentication → Sign In / Providers → Email**: desactivar *Allow new users to sign up*.
+5. **Project Settings → API**: copiar *Project URL* y la clave *anon public* en `js/config.js`. Esa clave es pública por diseño; la seguridad está en las reglas del paso 2: el catálogo lo ve cualquiera, y ventas, compras y redes solo los correos administradores.
+
+Para cargar las prendas de ejemplo en la base: Panel → Ajustes → «Cargar prendas de ejemplo».
+
+## WhatsApp de pedidos
+
+`ordersWhatsapp` en `js/config.js` define a qué número llegan los pedidos, reservas y asesorías que arma la página. Para producción debe ser el de la boutique: `573205605644`.
+
+## Pendiente para producción
+
+Fotos y precios reales, dominio propio y pasarela de pago (Wompi o Mercado Pago) si quieren cobrar en línea.

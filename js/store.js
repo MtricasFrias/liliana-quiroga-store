@@ -9,6 +9,7 @@ let cart = read();
 let filter = { brand: '', cat: '', gender: '', size: '', sort: 'new' };
 let openCode = null;
 let step = 1;
+let ready = !db.isRemote();
 const order = { mode: 'recoger', dep: 'Tolima', city: 'Ibagué', carrier: '', name: '', address: '', notes: '', gift: false, to: '', message: '' };
 
 function read() { try { return JSON.parse(localStorage.getItem(CART)) || []; } catch { return []; } }
@@ -74,7 +75,8 @@ function renderCatalog() {
   const bs = $('#brand-select');
   bs.innerHTML = '<option value="">Todas</option>' + db.brands().map(b => `<option ${filter.brand === b ? 'selected' : ''}>${esc(b)}</option>`).join('');
   $('#count').textContent = `${list.length} ${list.length === 1 ? 'pieza' : 'piezas'}`;
-  $('#grid').innerHTML = list.map(p => piece(p)).join('') || '<p class="empty">No hay piezas con ese filtro. Escríbenos por WhatsApp y te ayudamos a encontrarla.</p>';
+  $('#grid').innerHTML = !ready ? '<p class="empty">Cargando la colección…</p>'
+    : list.map(p => piece(p)).join('') || '<p class="empty">No hay piezas con ese filtro. Escríbenos por WhatsApp y te ayudamos a encontrarla.</p>';
 
   const priv = all.filter(p => p.exclusive);
   $('#privada').hidden = !priv.length;
@@ -337,4 +339,7 @@ renderHero();
 renderCatalog();
 reconcile();
 renderScore();
+// Base compartida: trae el catálogo real y queda escuchando cada venta de la boutique.
+db.init().then(() => { ready = true; renderHero(); renderCatalog(); reconcile(); renderScore(); })
+  .catch(() => toast('No se pudo cargar la colección. Revisa tu conexión y recarga.', 'err'));
 document.body.classList.add('lit');

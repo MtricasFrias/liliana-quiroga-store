@@ -2,6 +2,9 @@ import * as db from './data.js';
 import { CATEGORIES, SIZE_ORDER, METHODS, CHANNELS, money, priceOf, activeDiscount, colorHex, dayKey } from './data.js';
 import { garmentSVG } from './garments.js';
 import { $, $$, esc, toast, download, shrinkImage, icon, X, LINKS, STORE, wa, tick } from './util.js';
+
+// Ejecuta un cambio y, si la base lo rechaza, muestra el motivo.
+const act = async (fn, ok) => { try { await fn(); if (ok) toast(ok); return true; } catch (e) { toast(e.message, 'err'); return false; } };
 import { barChart, hBars } from './charts.js';
 
 // ---------- acceso ----------
@@ -10,6 +13,7 @@ const sha = async t => [...new Uint8Array(await crypto.subtle.digest('SHA-256', 
 const SESSION = 'lq.admin.ok';
 
 async function gate() {
+  if (db.isRemote()) return gateRemote();
   const hasPin = !!db.load().settings.pinHash;
   $('#gate-title').textContent = hasPin ? 'Ingresa tu PIN' : 'Crea el PIN del panel';
   $('#gate-hint').textContent = hasPin ? 'Acceso solo para los dueños de la boutique.' : 'Elige 4 a 8 números. Lo pedirá cada vez que abras el panel.';
@@ -26,6 +30,31 @@ async function gate() {
     open();
   };
   $('#pin').focus();
+}
+
+// Base compartida: correo y contraseña de administrador (Supabase Auth). La sesión queda guardada en el equipo.
+async function gateRemote() {
+  const g = $('#gate');
+  g.classList.add('remote');
+  $('#gate-title').textContent = 'Panel de la boutique';
+  $('#gate-hint').textContent = 'Entra con tu correo y contraseña de administrador.';
+  $('#gate-note').textContent = 'Los datos se guardan en la base compartida: todos los equipos ven lo mismo al instante.';
+  $('#email').hidden = false;
+  Object.assign($('#pin'), { placeholder: 'Contraseña', inputMode: 'text' });
+  $('#pin').removeAttribute('maxlength');
+  try {
+    await db.init({ admin: true });
+    if (await db.session() && await db.isAdmin()) return open();
+  } catch (e) { toast(e.message, 'err'); }
+  g.hidden = false;
+  g.onsubmit = async e => {
+    e.preventDefault();
+    const btn = g.querySelector('button'); btn.disabled = true;
+    try { await db.signIn($('#email').value.trim(), $('#pin').value); open(); }
+    catch (err) { toast(err.message, 'err'); $('#pin').value = ''; }
+    finally { btn.disabled = false; }
+  };
+  $('#email').focus();
 }
 
 const VIEWS = {
@@ -174,13 +203,14 @@ function refreshTicket(bump = false) {
   $$('[data-del]', ol).forEach(b => b.onclick = () => { ticket.splice(b.dataset.del, 1); refreshTicket(); });
 }
 
-function charge() {
+async function charge() {
+  $('#charge').disabled = true;
   try {
-    const s = db.sell(ticket, { method: sale.method, channel: sale.channel, customer: { name: sale.name.trim(), phone: sale.phone.trim(), email: sale.email.trim() } });
+    const s = await db.sell(ticket, { method: sale.method, channel: sale.channel, customer: { name: sale.name.trim(), phone: sale.phone.trim(), email: sale.email.trim() } });
     ticket = []; sale = { ...sale, name: '', phone: '', email: '' };
     render('vender', true);
     showReceipt(s);
-  } catch (e) { toast(e.message, 'err'); }
+  } catch (e) { toast(e.message, 'err'); $('#charge').disabled = false; }
 }
 
 // Cámara del celular: lee el QR de la etiqueta (Chrome en Android).
@@ -287,8 +317,8 @@ function viewToday(main) {
   tick($('#k-rev'), s.revenue, money);
   $('#day').onchange = e => { todayDate = e.target.value || dayKey(Date.now()); viewToday(main); };
   $$('[data-rc]').forEach(b => b.onclick = () => showReceipt(db.load().sales.find(x => x.id === b.dataset.rc)));
-  $$('[data-void]').forEach(b => b.onclick = () => { if (confirm('¿Anular esta venta? Las prendas vuelven al inventario.')) { db.voidSale(b.dataset.void); toast('Venta anulada, stock devuelto'); } });
-  $$('[data-rmp]').forEach(b => b.onclick = () => { if (confirm('¿Borrar este registro de compra? No cambia el stock.')) db.removePurchase(b.dataset.rmp); });
+  $$('[data-void]').forEach(b => b.onclick = () => { if (confirm('¿Anular esta venta? Las prendas vuelven al inventario.')) act(() => db.voidSale(b.dataset.void), 'Venta anulada, stock devuelto'); });
+  $$('[data-rmp]').forEach(b => b.onclick = () => { if (confirm('¿Borrar este registro de compra? No cambia el stock.')) act(() => db.removePurchase(b.dataset.rmp)); });
 }
 
 // ==================== INVENTARIO ====================
@@ -334,8 +364,7 @@ function viewInventory(main) {
   $('#inv-low').onchange = e => { inv.low = e.target.checked; viewInventory(main); };
   $$('.inv-sizes input').forEach(i => i.onchange = () => {
     const p = db.find(i.dataset.code); const n = Math.max(0, parseInt(i.value, 10) || 0);
-    db.saveProduct({ ...p, stock: { ...p.stock, [i.dataset.size]: n } }, { logPurchase: false });
-    toast(`${p.code}-${i.dataset.size}: ${n} en tienda`);
+    act(() => db.saveProduct({ ...p, stock: { ...p.stock, [i.dataset.size]: n } }, { logPurchase: false }), `${p.code}-${i.dataset.size}: ${n} en tienda`);
   });
   $$('[data-edit]').forEach(b => b.onclick = () => productForm(db.find(b.dataset.edit)));
   $$('[data-color]').forEach(b => b.onclick = () => productForm(null, db.find(b.dataset.color)));
@@ -389,7 +418,7 @@ function productForm(p, base = null) {
   f.color.oninput = () => $('.swatch-live', f).style.setProperty('--c', colorHex(f.color.value));
   $$('[data-cancel]', f).forEach(b => b.onclick = () => dlg.close());
   $$('[data-rmimg]', f).forEach(b => b.onclick = () => { removed[b.dataset.rmimg] = true; b.closest('figure').remove(); });
-  $('#pdel')?.addEventListener('click', () => { if (confirm(`¿Eliminar ${src.code}? Desaparece de la tienda.`)) { db.deleteProduct(src.code); dlg.close(); toast('Prenda eliminada'); } });
+  $('#pdel')?.addEventListener('click', () => { if (confirm(`¿Eliminar ${src.code}? Desaparece de la tienda.`)) act(() => db.deleteProduct(src.code), 'Prenda eliminada').then(ok => ok && dlg.close()); });
   f.onsubmit = async e => {
     e.preventDefault();
     for (const name of ['brand', 'name', 'color', 'cost', 'price']) if (!f[name].value.trim()) { f[name].focus(); return toast('Completa marca, nombre, color, costo y precio', 'err'); }
@@ -397,13 +426,17 @@ function productForm(p, base = null) {
     const stock = {};
     SIZE_ORDER.forEach(s => { const v = fd.get('sz-' + s); if (v !== '') stock[s] = Math.max(0, parseInt(v, 10) || 0); });
     if (!Object.keys(stock).length) return toast('Indica al menos una talla', 'err');
-    const pic = async k => { const file = fd.get(k); return file?.size ? shrinkImage(file) : removed[k] ? '' : src[k]; };
+    const code = f.code.value;
+    const pic = async k => { const file = fd.get(k); return file?.size ? db.uploadPhoto(await shrinkImage(file), `${code}-${k}`) : removed[k] ? '' : src[k]; };
+    const save = $('[value=save]', f), again = $('[value=again]', f);
+    save.disabled = again.disabled = true;
     const saved = { ...src, cat: f.cat.value, code: f.code.value, brand: fd.get('brand').trim(), name: fd.get('name').trim(), color: fd.get('color').trim(), gender: fd.get('gender'),
       cost: +fd.get('cost'), price: +fd.get('price'), stock, img: await pic('img'), modelImg: await pic('modelImg'), fabric: fd.get('fabric').trim(), fit: fd.get('fit').trim(),
       model: fd.get('model'), exclusive: fd.get('exclusive') === 'on', details: fd.get('details').split('\n').map(s => s.trim()).filter(Boolean), care: fd.get('care').trim() };
     delete saved.hex;
-    db.saveProduct(saved);
-    toast(`${saved.code} guardada y publicada en la tienda`);
+    const ok = await act(() => db.saveProduct(saved), `${saved.code} guardada y publicada en la tienda`);
+    save.disabled = again.disabled = false;
+    if (!ok) return;
     if (e.submitter?.value === 'again') productForm(null, saved); else dlg.close();
   };
   dlg.showModal();
@@ -426,10 +459,9 @@ function restockForm() {
   const sync = () => { const p = db.find(f.code.value); f.size.innerHTML = db.sizesOf(p).map(s => `<option>${s}</option>`).join(''); f.cost.value = p.cost || ''; };
   f.code.onchange = sync; sync();
   $$('[data-cancel]', f).forEach(b => b.onclick = () => dlg.close());
-  f.onsubmit = e => {
+  f.onsubmit = async e => {
     e.preventDefault();
-    try { db.restock(f.code.value, f.size.value, +f.qty.value, +f.cost.value); dlg.close(); toast(`Entrada registrada: ${f.code.value}-${f.size.value} +${f.qty.value}`); }
-    catch (err) { toast(err.message, 'err'); }
+    if (await act(() => db.restock(f.code.value, f.size.value, +f.qty.value, +f.cost.value), `Entrada registrada: ${f.code.value}-${f.size.value} +${f.qty.value}`)) dlg.close();
   };
   dlg.showModal();
 }
@@ -470,14 +502,13 @@ function viewDiscounts(main) {
   $$('[data-qc]').forEach(b => b.onclick = () => { ps.filter(p => p.cat === b.dataset.qc).forEach(p => picked.add(p.code)); redraw(); });
   $('#qnone').onclick = () => { picked.clear(); redraw(); };
   $$('[data-pct]').forEach(b => b.onclick = () => { $('#dform').pct.value = b.dataset.pct; });
-  $('#dform').onsubmit = e => {
+  $('#dform').onsubmit = async e => {
     e.preventDefault();
     const pct = Math.min(90, Math.max(1, +e.target.pct.value || 0));
-    db.setDiscount([...picked], pct, e.target.until.value);
-    toast(`Descuento del ${pct} % aplicado a ${picked.size} ${picked.size === 1 ? 'prenda' : 'prendas'}`);
-    picked.clear();
+    const n = picked.size;
+    if (await act(() => db.setDiscount([...picked], pct, e.target.until.value), `Descuento del ${pct} % aplicado a ${n} ${n === 1 ? 'prenda' : 'prendas'}`)) { picked.clear(); render('descuentos'); }
   };
-  $$('[data-off]').forEach(b => b.onclick = () => { db.setDiscount([b.dataset.off], 0); toast('Descuento quitado'); });
+  $$('[data-off]').forEach(b => b.onclick = () => act(() => db.setDiscount([b.dataset.off], 0), 'Descuento quitado'));
 }
 
 // ==================== FINANZAS ====================
@@ -570,9 +601,9 @@ function viewSocial(main) {
     const fd = new FormData(e.target); const entry = {};
     for (const [k, v] of fd) if (v !== '') entry[k] = +v;
     if (!Object.keys(entry).length) return toast('Escribe al menos un número', 'err');
-    db.addSocial(entry); toast('Registro guardado');
+    act(() => db.addSocial(entry), 'Registro guardado');
   };
-  $$('[data-rms]').forEach(b => b.onclick = () => { if (confirm('¿Borrar este registro?')) db.removeSocial(b.dataset.rms); });
+  $$('[data-rms]').forEach(b => b.onclick = () => { if (confirm('¿Borrar este registro?')) act(() => db.removeSocial(b.dataset.rms)); });
 }
 
 // ==================== ETIQUETAS ====================
@@ -606,25 +637,26 @@ function viewSettings(main) {
   const st = db.load();
   main.innerHTML = head('Ajustes') + `
   <div class="cols cols-2">
-    <section class="panel"><h2>Cambiar PIN</h2><form id="newpin" class="row-form"><input name="pin" inputmode="numeric" pattern="\\d{4,8}" required placeholder="Nuevo PIN (4 a 8 números)" aria-label="Nuevo PIN"><button class="btn btn-dark btn-sm">Cambiar</button></form></section>
-    <section class="panel"><h2>Respaldo</h2><p class="help">Los datos de la vista previa viven en este navegador. Descarga un respaldo cada semana.</p>
-      <div class="head-actions"><button class="btn btn-sm" id="backup">Descargar respaldo</button><label class="btn btn-sm">Restaurar respaldo<input type="file" id="restore" accept="application/json" hidden></label></div></section>
+    ${db.isRemote() ? `<section class="panel"><h2>Base compartida</h2><p class="help">Conectada. Inventario, ventas y compras se guardan en Supabase y se ven al instante en todos los equipos. Para agregar o quitar administradores, edita la tabla «admins» y los usuarios en Supabase.</p></section>`
+    : `<section class="panel"><h2>Cambiar PIN</h2><form id="newpin" class="row-form"><input name="pin" inputmode="numeric" pattern="\\d{4,8}" required placeholder="Nuevo PIN (4 a 8 números)" aria-label="Nuevo PIN"><button class="btn btn-dark btn-sm">Cambiar</button></form></section>`}
+    <section class="panel"><h2>Respaldo</h2><p class="help">${db.isRemote() ? 'Descarga una copia de todo lo registrado para guardarla aparte.' : 'Los datos de la vista previa viven en este navegador. Descarga un respaldo cada semana.'}</p>
+      <div class="head-actions"><button class="btn btn-sm" id="backup">Descargar respaldo</button>${db.isRemote() ? '' : '<label class="btn btn-sm">Restaurar respaldo<input type="file" id="restore" accept="application/json" hidden></label>'}</div></section>
     <section class="panel"><h2>Empezar de nuevo</h2><p class="help">${st.examples ? 'Ahora hay prendas de ejemplo para ver cómo luce la tienda.' : 'La boutique está en limpio.'} Esto borra prendas, ventas, compras y registros de redes.</p>
       <div class="head-actions"><button class="btn btn-sm" id="reset-empty">Dejar todo en limpio</button><button class="btn btn-sm" id="reset-ex">Cargar prendas de ejemplo</button></div></section>
   </div>`;
-  $('#newpin').onsubmit = async e => { e.preventDefault(); const h = await sha(e.target.pin.value); db.setSettings({ pinHash: h }); sessionStorage.setItem(SESSION, h); toast('PIN actualizado'); e.target.reset(); };
+  $('#newpin')?.addEventListener('submit', async e => { e.preventDefault(); const h = await sha(e.target.pin.value); db.setSettings({ pinHash: h }); sessionStorage.setItem(SESSION, h); toast('PIN actualizado'); e.target.reset(); });
   $('#backup').onclick = () => download(`respaldo-liliana-quiroga-${dayKey(Date.now())}.json`, JSON.stringify(db.load()), 'application/json');
-  $('#restore').onchange = async e => {
+  if ($('#restore')) $('#restore').onchange = async e => {
     try {
       const data = JSON.parse(await e.target.files[0].text());
       if (!Array.isArray(data.products) || !Array.isArray(data.sales)) throw new Error();
-      db.replaceAll({ purchases: [], social: [], seq: 0, ...data, settings: db.load().settings }); toast('Respaldo restaurado');
+      await db.replaceAll({ purchases: [], social: [], seq: 0, ...data, settings: db.load().settings }); toast('Respaldo restaurado');
     } catch { toast('Archivo de respaldo inválido', 'err'); }
   };
-  const reset = ex => { if (confirm('Se borra todo lo registrado. ¿Continuar?')) { const pin = db.load().settings.pinHash; db.resetAll(ex); db.setSettings({ pinHash: pin }); toast(ex ? 'Prendas de ejemplo cargadas' : 'Boutique en limpio'); } };
+  const reset = ex => { if (confirm('Se borra todo lo registrado. ¿Continuar?')) act(() => db.resetAll(ex), ex ? 'Prendas de ejemplo cargadas' : 'Boutique en limpio'); };
   $('#reset-empty').onclick = () => reset(false);
   $('#reset-ex').onclick = () => reset(true);
 }
 
-$('#logout').onclick = () => { sessionStorage.removeItem(SESSION); location.reload(); };
+$('#logout').onclick = async () => { sessionStorage.removeItem(SESSION); await db.signOut(); location.reload(); };
 gate();

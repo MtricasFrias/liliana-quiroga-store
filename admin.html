@@ -19,10 +19,12 @@
   <img src="assets/brand/cocodrilo-cabeza.svg" alt="Liliana Quiroga Store" width="120" height="120">
   <h1 id="gate-title">Ingresa tu PIN</h1>
   <p id="gate-hint"></p>
-  <label for="pin" class="sr-only">PIN</label>
+  <label for="email" class="sr-only">Correo</label>
+  <input id="email" type="email" autocomplete="username" placeholder="Correo" hidden>
+  <label for="pin" class="sr-only">PIN o contraseña</label>
   <input id="pin" type="password" inputmode="numeric" autocomplete="current-password" maxlength="8" required>
   <button class="btn btn-brass btn-block">Entrar</button>
-  <p class="gate-note">Vista previa: el acceso se valida en este navegador. Al pasar a producción se reemplaza por un inicio de sesión seguro.</p>
+  <p class="gate-note" id="gate-note">Vista previa: el acceso se valida en este navegador. Con la base compartida se entra con correo y contraseña.</p>
 </form>
 
 <div id="app" class="app" hidden>

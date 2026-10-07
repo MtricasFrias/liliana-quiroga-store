@@ -6,6 +6,7 @@ body { background: var(--ivory); }
 .gate h1 { font-size: 2.4rem; }
 .gate p { color: var(--v-200); max-width: 34ch; }
 .gate input { max-width: 280px; text-align: center; font-size: 1.6rem !important; letter-spacing: .5em; }
+.gate.remote input { font-size: 1rem !important; letter-spacing: 0; }
 .gate .btn { max-width: 280px; }
 .gate-note { font-size: .78rem; margin-top: 18px; color: var(--v-300) !important; }
 

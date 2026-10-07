@@ -1,3 +1,5 @@
+import { CONFIG } from './config.js';
+
 export const $ = (s, el = document) => el.querySelector(s);
 export const $$ = (s, el = document) => [...el.querySelectorAll(s)];
 export const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -14,7 +16,7 @@ export const LINKS = {
   facebook: 'https://www.facebook.com/share/1FUBMbLKKj/',
   maps: 'https://maps.app.goo.gl/mFwqeGpskEbdD5488',
 };
-export const wa = (text, phone = STORE.whatsapp) => `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
+export const wa = (text, phone = CONFIG.ordersWhatsapp || STORE.whatsapp) => `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
 
 // Íconos propios, trazo 1.5 sobre 24 px.
 const P = {
@@ -70,7 +72,7 @@ export function download(name, text, type = 'text/csv;charset=utf-8') {
   a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 }
 
-// Reduce una foto a 1000 px (webp, conserva transparencia) para que quepa en el almacenamiento del navegador.
+// Reduce una foto a 1000 px (webp, conserva transparencia) antes de guardarla o subirla.
 export function shrinkImage(file, max = 1000) {
   return new Promise((ok, fail) => {
     const img = new Image();
@@ -78,7 +80,7 @@ export function shrinkImage(file, max = 1000) {
       const k = Math.min(1, max / Math.max(img.width, img.height));
       const c = Object.assign(document.createElement('canvas'), { width: Math.round(img.width * k), height: Math.round(img.height * k) });
       c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
-      ok(c.toDataURL('image/webp', 0.82)); URL.revokeObjectURL(img.src);
+      c.toBlob(ok, 'image/webp', 0.82); URL.revokeObjectURL(img.src);
     };
     img.onerror = fail;
     img.src = URL.createObjectURL(file);
