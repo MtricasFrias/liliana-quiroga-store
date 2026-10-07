@@ -1,0 +1,8 @@
+# Archivos de trabajo que no se publican (el repositorio de GitHub Pages es público)
+assets/ref/
+.claude/
+.impeccable/
+PRODUCT.md
+DESIGN.md
+tools/
+__pycache__/
