@@ -10,7 +10,7 @@ const letter = $('#letter');
 
 function render(checked) {
   if (!o) {
-    letter.innerHTML = `<header class="lt-head"><img src="assets/brand/cocodrilo-cabeza.svg" alt="" width="96" height="96"><h1>Carta no disponible</h1></header>
+    letter.innerHTML = `<header class="lt-head"><img src="assets/brand/lq-sello.svg" alt="" width="96" height="96"><h1>Carta no disponible</h1></header>
       <p class="lt-note">Este enlace de pedido está incompleto. Pide al cliente que lo reenvíe o vuelve a la tienda.</p>`;
     $('#actions').innerHTML = `<a class="btn btn-brass" href="index.html">Ir a la tienda</a>`;
     return;
@@ -21,7 +21,7 @@ function render(checked) {
   const art = l => { const p = db.find(l.code); return p ? (p.img ? `<img src="${p.img}" alt="">` : garmentSVG(p)) : `<span class="lt-dot" style="--c:${colorHex(l.color)}"></span>`; };
   letter.innerHTML = `
     <header class="lt-head">
-      <img src="assets/brand/cocodrilo-cabeza.svg" alt="" width="96" height="96">
+      <img src="assets/brand/lq-sello.svg" alt="" width="110" height="110">
       <p class="lt-house">${STORE.name}</p>
       <h1>Carta de <em>pedido</em></h1>
       <dl class="lt-meta"><div><dt>N.º</dt><dd>${esc(o.n)}</dd></div><div><dt>Fecha</dt><dd>${date}</dd></div><div><dt>A nombre de</dt><dd>${esc(o.c)}</dd></div></dl>

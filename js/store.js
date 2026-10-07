@@ -57,9 +57,9 @@ function renderHero() {
   const p = all.find(x => x.exclusive && db.totalStock(x)) || all.find(x => db.totalStock(x)) || all[0];
   const box = $('#hero-piece');
   if (!p) { box.innerHTML = ''; return; }
-  box.innerHTML = `<button class="hero-niche sway" data-open="${p.code}" aria-label="Ver ${esc(p.name)}">${art(p, 'model')}</button>
-    <figcaption><span class="plaque">${p.exclusive ? 'Colección Privada' : 'Pieza'} · ${p.code}</span>
-      <strong>${esc(p.name)}</strong><span>${esc(p.brand)} · ${priceHTML(p)}</span></figcaption>`;
+  box.innerHTML = `<button class="passe sway" data-open="${p.code}" aria-label="Ver ${esc(p.name)}">${art(p, 'model')}</button>
+    <figcaption><span class="cap-no">${p.exclusive ? 'Colección Privada' : 'Pieza'} · N.º ${p.code}</span>
+      <strong>${esc(p.name)}</strong><span>${esc(p.brand)} · ${esc(p.color)}</span>${priceHTML(p)}</figcaption>`;
   $('#brand-list').innerHTML = db.brands().map(b => `<li>${esc(b)}</li>`).join('');
 }
 
@@ -286,7 +286,7 @@ function stepDetails(ls, sh, total) {
     ${order.gift ? `<div class="gift">
       <label>Para<input id="o-to" value="${esc(order.to)}" placeholder="Nombre de quien lo recibe"></label>
       <label>Mensaje de la tarjeta<textarea id="o-msg" rows="3" maxlength="240" placeholder="Escribe tu mensaje">${esc(order.message)}</textarea></label>
-      <div class="card-preview" aria-label="Vista previa de la tarjeta"><img src="assets/brand/cocodrilo-cabeza-verde.svg" alt="" width="54" height="54">
+      <div class="card-preview" aria-label="Vista previa de la tarjeta"><img src="assets/brand/lq.svg" alt="" width="44" height="42">
         <p class="cp-to">${order.to ? 'Para ' + esc(order.to) : 'Para alguien especial'}</p><p class="cp-msg" id="cp-msg">${esc(order.message) || 'Tu mensaje aparecerá aquí.'}</p><p class="cp-from">Liliana Quiroga Store</p></div>
     </div>` : ''}
     <label>Notas (opcional)<input id="o-notes" value="${esc(order.notes)}" placeholder="Horario de entrega, referencias…"></label>
@@ -338,7 +338,7 @@ function renderSent(dlg) {
   dlg.innerHTML = `<div class="cart">
     <header class="cart-head"><div class="cart-top"><h2>Solicitud lista</h2><button class="x" data-close aria-label="Cerrar">${X}</button></div></header>
     <div class="cart-body sent">
-      <img src="assets/brand/cocodrilo-cabeza-verde.svg" alt="" width="84" height="84">
+      <img src="assets/brand/lq-sello.svg" alt="" width="110" height="110">
       <p class="sent-no">Pedido N.º ${o.n}</p>
       <h3>Gracias, ${esc(o.c.split(' ')[0])}.</h3>
       <p>${o.p?.m === 'ahora' && o.p.ok ? 'Abrimos WhatsApp con tu solicitud. <b>Adjunta allí la captura del comprobante de pago</b> y la boutique confirma tu pedido.' : 'Abrimos WhatsApp con tu solicitud para enviarla a la boutique. Allí te confirmamos disponibilidad, pago y entrega.'}</p>

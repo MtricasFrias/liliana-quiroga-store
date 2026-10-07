@@ -252,7 +252,7 @@ function showReceipt(s) {
   const phone = (c.phone || '').replace(/\D/g, '');
   dlg.innerHTML = `<div class="rc-wrap">
     <article class="rc" id="rc">
-      <img src="assets/brand/cocodrilo-cabeza-verde.svg" alt="" width="72" height="72">
+      <img src="assets/brand/lq-sello.svg" alt="" width="96" height="96">
       <h2>${STORE.name}</h2><p class="rc-addr">${STORE.address} · WhatsApp ${STORE.phone}</p>
       <dl class="rc-meta"><div><dt>Comprobante</dt><dd>N.º ${String(s.no).padStart(4, '0')}</dd></div><div><dt>Fecha</dt><dd>${new Date(s.at).toLocaleString('es-CO', { dateStyle: 'medium', timeStyle: 'short' })}</dd></div>
         ${c.name ? `<div><dt>Cliente</dt><dd>${esc(c.name)}</dd></div>` : ''}<div><dt>Pago</dt><dd>${s.method}</dd></div></dl>
@@ -627,7 +627,7 @@ function drawLabels() {
   const perUnit = $('#per-unit')?.checked;
   const items = [...labelPick].map(db.find).filter(Boolean).flatMap(p => db.sizesOf(p).flatMap(s => Array(perUnit ? Math.max(0, p.stock[s]) : 1).fill([p, s])));
   const qr = text => { if (!window.qrcode) return ''; const q = window.qrcode(0, 'M'); q.addData(text); q.make(); return q.createSvgTag({ cellSize: 2, margin: 0, scalable: true }); };
-  $('#sheet').innerHTML = items.map(([p, s]) => `<article class="tag"><header><img src="assets/brand/cocodrilo.svg" alt=""><span>Liliana Quiroga</span></header>
+  $('#sheet').innerHTML = items.map(([p, s]) => `<article class="tag"><header><img src="assets/brand/lq.svg" alt=""><span>Liliana Quiroga</span></header>
     <div class="tag-code">${p.code}<span>${s}</span></div><div class="tag-qr">${qr(`${p.code}-${s}`)}</div>
     <p class="tag-name">${esc(p.brand)} · ${esc(p.name)}<br>${esc(p.color)}</p><p class="tag-price">${money(p.price)}</p></article>`).join('');
 }

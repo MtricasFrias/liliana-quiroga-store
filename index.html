@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#0A1712">
 <meta property="og:title" content="Liliana Quiroga Store">
 <meta property="og:description" content="Boutique multimarca en Ibagué. Hecho para ser visto.">
-<meta property="og:image" content="assets/brand/cocodrilo-cabeza.svg">
+<meta property="og:image" content="assets/brand/png/avatar.png">
 <link rel="icon" href="assets/brand/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -27,8 +27,9 @@
     <a href="#boutique">La boutique</a>
   </nav>
   <a class="crest" href="#inicio" aria-label="Liliana Quiroga Store, inicio">
-    <img src="assets/brand/cocodrilo-laton.svg" alt="" width="120" height="45">
-    <span>Liliana Quiroga</span>
+    <img class="crest-croc" src="assets/brand/cocodrilo-laton.svg" alt="" width="96" height="36">
+    <i aria-hidden="true"></i>
+    <img class="crest-lq" src="assets/brand/lq-laton.svg" alt="" width="54" height="52">
   </a>
   <div class="top-actions">
     <a class="top-wa" href="https://wa.me/573205605644" target="_blank" rel="noopener" aria-label="Escribir por WhatsApp" id="top-wa"></a>
@@ -38,6 +39,7 @@
 
 <main>
   <section class="hero" id="inicio">
+    <img class="hero-lq" src="assets/brand/lq-laton.svg" alt="" width="900" height="870">
     <div class="hero-copy">
       <h1>Hecho para <em>ser visto.</em></h1>
       <p class="lede">Lacoste, Hugo Boss y piezas que pocas vitrinas tienen. Elegidas una a una en nuestra boutique y enviadas a toda Colombia.</p>
@@ -45,14 +47,16 @@
         <a class="btn btn-brass" href="#coleccion">Ver la colección</a>
         <a class="btn btn-ghost-light" href="#privada">Colección Privada</a>
       </div>
-      <div id="hero-socials"></div>
-      <p class="hero-house"><img src="assets/brand/cocodrilo-cabeza.svg" alt="" width="54" height="54">Boutique multimarca · Ibagué</p>
+      <div class="hero-sign">
+        <div id="hero-socials"></div>
+        <p class="hero-house">Boutique multimarca · Ibagué</p>
+      </div>
     </div>
-    <figure class="hero-vitrine" id="hero-piece" aria-live="polite"></figure>
+    <figure class="hero-frame" id="hero-piece" aria-live="polite"></figure>
   </section>
 
   <section class="houses" aria-label="Marcas">
-    <p class="houses-title">Multimarca</p>
+    <img class="houses-lq" src="assets/brand/lq-laton.svg" alt="" width="44" height="42">
     <ul id="brand-list"></ul>
     <p class="houses-note">Tienda física en Ibagué · Envíos a toda Colombia · Asesoría personal</p>
   </section>
@@ -76,7 +80,7 @@
 
   <section class="privada" id="privada" aria-labelledby="priv-title">
     <div class="priv-head">
-      <span class="plaque">Acceso reservado</span>
+      <img class="priv-seal" src="assets/brand/lq-sello.svg" alt="" width="120" height="120" loading="lazy">
       <h2 id="priv-title">Colección <em>Privada</em></h2>
       <p>Piezas que rara vez llegan a una vitrina. Hay pocas unidades de cada una, así que se reservan por WhatsApp antes de que se vayan.</p>
     </div>
@@ -99,8 +103,8 @@
 </main>
 
 <footer class="foot">
-  <img class="foot-croc" src="assets/brand/cocodrilo-caminando.svg" alt="" width="220" height="56" loading="lazy">
-  <p class="foot-mark">Liliana Quiroga <span>Store</span></p>
+  <img class="foot-seal" src="assets/brand/lq-sello-laton.svg" alt="Sello LQ de Liliana Quiroga Store" width="180" height="180" loading="lazy">
+  <img class="foot-croc" src="assets/brand/cocodrilo-caminando.svg" alt="" width="180" height="46" loading="lazy">
   <div id="foot-socials"></div>
   <nav aria-label="Secciones"><a href="#coleccion">Colección</a><a href="#privada">Colección Privada</a><a href="#boutique">La boutique</a></nav>
 </footer>
