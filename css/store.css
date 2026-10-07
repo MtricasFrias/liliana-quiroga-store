@@ -125,7 +125,7 @@
 
 /* ---------- Colección Privada ---------- */
 .privada { padding: clamp(72px, 9vw, 130px) var(--gutter); background: var(--ivory-2); }
-.priv-seal { width: 110px; }
+.priv-seal { width: 96px; }
 .priv-head { max-width: 760px; margin: 0 auto clamp(44px, 5vw, 70px); display: grid; justify-items: center; gap: 18px; text-align: center; }
 .priv-head h2 { font-size: clamp(2.8rem, 6.2vw, 5.4rem); letter-spacing: -.02em; }
 .priv-head h2 em { font-style: italic; color: var(--brass-lo); }
@@ -136,10 +136,8 @@
 
 /* ---------- La boutique ---------- */
 .boutique { max-width: 1440px; margin: 0 auto; padding: clamp(72px, 9vw, 130px) var(--gutter); display: grid; grid-template-columns: .95fr 1.05fr; gap: clamp(36px, 5vw, 90px); align-items: center; }
-.bq-croc { width: clamp(150px, 16vw, 230px); margin: 0 0 18px -6px; }
 .boutique h2 { font-size: clamp(2.6rem, 5.4vw, 4.6rem); letter-spacing: -.02em; }
 .bq-lede { margin-top: 18px; max-width: 46ch; color: var(--ink-2); font-weight: 300; font-size: 1.06rem; }
-.boutique address { margin: 24px 0 28px; font: italic 400 1.3rem/1.4 var(--font-display); }
 .bq-links { display: grid; gap: 8px; }
 .bq-link { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 16px; padding: 12px 18px 12px 12px; border-radius: 16px; text-decoration: none; background: var(--ivory); transition: background-color .3s var(--ease-out); }
 .bq-link b { display: block; font-weight: 500; letter-spacing: .02em; }
@@ -153,7 +151,7 @@
 
 /* ---------- Pie ---------- */
 .foot { background: var(--v-950); color: var(--ivory); padding: 70px var(--gutter) 130px; display: grid; justify-items: center; gap: 22px; text-align: center; }
-.foot-seal { width: 170px; }
+.foot-seal { width: 120px; }
 .foot-croc { width: 150px; margin-top: -6px; }
 .foot nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 28px; }
 .foot nav a { font-size: .72rem; letter-spacing: .2em; text-transform: uppercase; text-decoration: none; color: color-mix(in srgb, var(--ivory) 66%, transparent); }
@@ -357,3 +355,29 @@ body:has(.score:not([hidden])) .wa-float { display: none; }
 .pay-steps { margin: 0; padding-left: 20px; display: grid; gap: 4px; font-size: .9rem; color: var(--ink-2); }
 .check.paid { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 12px; background: #fff; color: var(--ink); font-size: .92rem; letter-spacing: 0; }
 @media (max-width: 420px) { .pay-grid { grid-template-columns: 1fr; justify-items: center; } .pay-key { justify-items: center; text-align: center; } }
+
+.lede em { display: block; margin-top: 14px; font: italic 400 1.18rem/1.4 var(--font-display); color: var(--brass-hi); }
+
+/* Placa de la boutique: latón cepillado con grabado, como la de la puerta */
+.bq-plaque {
+  position: relative; width: min(440px, 100%); margin: 30px 0 30px; padding: 38px 34px 32px; border-radius: 6px;
+  display: grid; justify-items: center; gap: 6px; text-align: center; color: #2B220F;
+  background: linear-gradient(135deg, #E9D09A 0%, #C8A35A 34%, #EBD5A4 52%, #B8924A 76%, #DCC085 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .45), inset 0 -1px 0 rgba(70, 52, 20, .35), 0 26px 50px -28px rgba(19, 36, 27, .6);
+}
+.bq-plaque::before { content: ''; position: absolute; inset: 11px; border: 1px solid rgba(70, 52, 20, .42); border-radius: 3px; box-shadow: 0 1px 0 rgba(255, 255, 255, .3); pointer-events: none; }
+.bq-plaque::after {
+  content: ''; position: absolute; inset: 20px; pointer-events: none;
+  background:
+    radial-gradient(circle, #F3E2BB 0 1.5px, #7D6230 2px 3.5px, transparent 4px) left top / 9px 9px no-repeat,
+    radial-gradient(circle, #F3E2BB 0 1.5px, #7D6230 2px 3.5px, transparent 4px) right top / 9px 9px no-repeat,
+    radial-gradient(circle, #F3E2BB 0 1.5px, #7D6230 2px 3.5px, transparent 4px) left bottom / 9px 9px no-repeat,
+    radial-gradient(circle, #F3E2BB 0 1.5px, #7D6230 2px 3.5px, transparent 4px) right bottom / 9px 9px no-repeat;
+}
+.bq-plaque img { width: 58px; margin-bottom: 6px; }
+.bq-plaque p { text-shadow: 0 1px 0 rgba(255, 245, 220, .45); }
+.pl-name { font: 400 2rem/1 var(--font-display); color: #13241B; letter-spacing: .01em; }
+.pl-kind { font: 500 .7rem/1.3 var(--font-text); letter-spacing: .32em; text-transform: uppercase; color: #3A2E14; }
+.pl-rule { width: 64px; height: 1px; margin: 10px 0 6px; background: rgba(43, 34, 15, .5); box-shadow: 0 1px 0 rgba(255, 245, 220, .45); }
+.pl-addr { font: italic 400 1.12rem/1.3 var(--font-display); color: #13241B; }
+.pl-city { font: 500 .72rem/1.3 var(--font-text); letter-spacing: .3em; text-transform: uppercase; color: #3A2E14; }

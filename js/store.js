@@ -206,7 +206,7 @@ function renderCart() {
   const dlg = $('#cart');
   if (sent) return renderSent(dlg);
   if (!ls.length) step = 1;
-  const body = !ls.length ? `<div class="cart-empty"><img src="assets/brand/cocodrilo-caminando.svg" alt="" width="200" height="52"><p>Tu pedido está vacío.</p><button class="btn btn-dark" data-close>Ver la colección</button></div>`
+  const body = !ls.length ? `<div class="cart-empty"><img src="assets/brand/cocodrilo.svg" alt="" width="180" height="67"><p>Tu pedido está vacío.</p><button class="btn btn-dark" data-close>Ver la colección</button></div>`
     : step === 1 ? stepItems(ls) : step === 2 ? stepDelivery(sub) : step === 3 ? stepPay(total) : stepDetails(ls, sh, total);
   const next = step === 1 ? 'Elegir entrega' : step === 2 ? 'Elegir pago' : step === 3 ? 'Continuar' : 'Enviar pedido por WhatsApp';
   dlg.innerHTML = `<div class="cart">
@@ -338,7 +338,7 @@ function renderSent(dlg) {
   dlg.innerHTML = `<div class="cart">
     <header class="cart-head"><div class="cart-top"><h2>Solicitud lista</h2><button class="x" data-close aria-label="Cerrar">${X}</button></div></header>
     <div class="cart-body sent">
-      <img src="assets/brand/lq-sello.svg" alt="" width="110" height="110">
+      <img src="assets/brand/lq-medallon.svg" alt="" width="96" height="96">
       <p class="sent-no">Pedido N.º ${o.n}</p>
       <h3>Gracias, ${esc(o.c.split(' ')[0])}.</h3>
       <p>${o.p?.m === 'ahora' && o.p.ok ? 'Abrimos WhatsApp con tu solicitud. <b>Adjunta allí la captura del comprobante de pago</b> y la boutique confirma tu pedido.' : 'Abrimos WhatsApp con tu solicitud para enviarla a la boutique. Allí te confirmamos disponibilidad, pago y entrega.'}</p>

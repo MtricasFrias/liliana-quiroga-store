@@ -90,7 +90,7 @@ function render(view, first = false) {
 // Imagen pequeña de la referencia: foto en gancho o ilustración.
 const thumb = p => p.img ? `<img src="${p.img}" alt="">` : garmentSVG(p);
 const head = (title, side = '') => `<header class="view-head"><h1>${title}</h1>${side}</header>`;
-const empty = (text, cta = '') => `<div class="empty-state"><img src="assets/brand/cocodrilo-caminando.svg" alt="" width="200" height="52"><p>${text}</p>${cta}</div>`;
+const empty = (text, cta = '') => `<div class="empty-state"><img src="assets/brand/cocodrilo.svg" alt="" width="180" height="67"><p>${text}</p>${cta}</div>`;
 const dateLabel = t => new Date(t).toLocaleDateString('es-CO', { weekday: 'long', day: 'numeric', month: 'long' });
 
 // ==================== VENDER ====================
@@ -252,7 +252,7 @@ function showReceipt(s) {
   const phone = (c.phone || '').replace(/\D/g, '');
   dlg.innerHTML = `<div class="rc-wrap">
     <article class="rc" id="rc">
-      <img src="assets/brand/lq-sello.svg" alt="" width="96" height="96">
+      <img src="assets/brand/lq-medallon.svg" alt="" width="84" height="84">
       <h2>${STORE.name}</h2><p class="rc-addr">${STORE.address} · WhatsApp ${STORE.phone}</p>
       <dl class="rc-meta"><div><dt>Comprobante</dt><dd>N.º ${String(s.no).padStart(4, '0')}</dd></div><div><dt>Fecha</dt><dd>${new Date(s.at).toLocaleString('es-CO', { dateStyle: 'medium', timeStyle: 'short' })}</dd></div>
         ${c.name ? `<div><dt>Cliente</dt><dd>${esc(c.name)}</dd></div>` : ''}<div><dt>Pago</dt><dd>${s.method}</dd></div></dl>
