@@ -8,4 +8,12 @@ export const CONFIG = {
   // WhatsApp que recibe los pedidos, reservas y asesorías que arma la página (57 + número).
   // Ahora apunta a un número de prueba; para producción cámbialo por el de la boutique: '573205605644'.
   ordersWhatsapp: '573132697130',
+  // Pago en línea. demo: true muestra el aviso "datos de ejemplo"; ponlo en false con los datos reales.
+  payments: {
+    demo: true,
+    breb: '@lqstore-ejemplo',                 // llave Bre-B de la boutique
+    holder: 'Liliana Quiroga Store',          // titular que verá el cliente al pagar
+    qrImage: '',                              // imagen del QR real de Bancolombia, ej. 'assets/pagos/qr-bancolombia.png'
+    qrText: 'EJEMPLO - Este no es un QR de pago real de Liliana Quiroga Store',
+  },
 };

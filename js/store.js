@@ -3,14 +3,17 @@ import { CATEGORIES, money, priceOf, activeDiscount, colorHex } from './data.js'
 import { garmentSVG } from './garments.js';
 import { quote, DEPARTMENTS } from './shipping.js';
 import { $, $$, esc, wa, toast, icon, X, socialButtons, LINKS, STORE, tick } from './util.js';
+import { buildOrder, orderText, cardURL } from './order.js';
+import { CONFIG } from './config.js';
 
 const CART = 'lq.cart.v3';
 let cart = read();
 let filter = { brand: '', cat: '', gender: '', size: '', sort: 'new' };
 let openCode = null;
 let step = 1;
+let sent = null;   // solicitud ya armada y enviada a WhatsApp
 let ready = !db.isRemote();
-const order = { mode: 'recoger', dep: 'Tolima', city: 'Ibagué', carrier: '', name: '', address: '', notes: '', gift: false, to: '', message: '' };
+const order = { pay: 'ahora', paid: false, mode: 'recoger', dep: 'Tolima', city: 'Ibagué', carrier: '', name: '', address: '', notes: '', gift: false, to: '', message: '' };
 
 function read() { try { return JSON.parse(localStorage.getItem(CART)) || []; } catch { return []; } }
 function write() { try { localStorage.setItem(CART, JSON.stringify(cart)); } catch { /* modo privado: el carrito vive en memoria */ } }
@@ -140,6 +143,7 @@ const stockNote = (p, s) => p.stock[s] === 1 ? 'Es la <b>última pieza</b> en es
 
 // ---------- pedido ----------
 function add(code, size, fromEl) {
+  sent = null;
   const line = cart.find(l => l.code === code && l.size === size);
   if ((line?.qty || 0) + 1 > stockLeft(code, size)) return toast('No hay más unidades en esa talla', 'err');
   line ? line.qty++ : cart.push({ code, size, qty: 1 });
@@ -192,7 +196,7 @@ function renderScore() {
   $('#cart-count').hidden = !n;
 }
 
-const STEPS = ['Prendas', 'Entrega', 'Tus datos'];
+const STEPS = ['Prendas', 'Entrega', 'Pago', 'Tus datos'];
 
 function renderCart() {
   const ls = lines();
@@ -200,10 +204,11 @@ function renderCart() {
   const sh = shipping();
   const total = sub + (sh?.cost || 0);
   const dlg = $('#cart');
+  if (sent) return renderSent(dlg);
   if (!ls.length) step = 1;
   const body = !ls.length ? `<div class="cart-empty"><img src="assets/brand/cocodrilo-caminando.svg" alt="" width="200" height="52"><p>Tu pedido está vacío.</p><button class="btn btn-dark" data-close>Ver la colección</button></div>`
-    : step === 1 ? stepItems(ls) : step === 2 ? stepDelivery(sub) : stepDetails(ls, sh, total);
-  const next = step === 1 ? 'Elegir entrega' : step === 2 ? 'Continuar' : 'Enviar pedido por WhatsApp';
+    : step === 1 ? stepItems(ls) : step === 2 ? stepDelivery(sub) : step === 3 ? stepPay(total) : stepDetails(ls, sh, total);
+  const next = step === 1 ? 'Elegir entrega' : step === 2 ? 'Elegir pago' : step === 3 ? 'Continuar' : 'Enviar pedido por WhatsApp';
   dlg.innerHTML = `<div class="cart">
     <header class="cart-head">
       <div class="cart-top">${step > 1 && ls.length ? `<button class="x" data-step="${step - 1}" aria-label="Volver">${icon('back')}</button>` : ''}<h2>Tu pedido</h2><button class="x" data-close aria-label="Cerrar">${X}</button></div>
@@ -212,7 +217,7 @@ function renderCart() {
     <div class="cart-body">${body}</div>
     ${ls.length ? `<footer class="cart-foot">
       <div class="cart-sum"><span>${units()} ${units() === 1 ? 'prenda' : 'prendas'}${step > 1 && sh ? ` · ${sh.cost ? money(sh.cost) + ' envío' : 'sin costo de envío'}` : ''}</span><strong>${money(step > 1 ? total : sub)}</strong></div>
-      <button class="btn btn-brass btn-block" id="cart-next">${step === 3 ? icon('whatsapp') : ''}${next}${step < 3 ? icon('arrow') : ''}</button>
+      <button class="btn btn-brass btn-block" id="cart-next">${step === 4 ? icon('whatsapp') : ''}${next}${step < 4 ? icon('arrow') : ''}</button>
     </footer>` : ''}
   </div>`;
   wireCart(dlg, ls, sh, total);
@@ -247,6 +252,32 @@ function stepDelivery(sub) {
   </div>` : ''}`;
 }
 
+// Pago: en línea (Bre-B o QR, sin hablar con nadie) o en persona / con asesoría.
+function stepPay(total) {
+  const pm = CONFIG.payments;
+  const persona = order.mode === 'recoger' ? 'Pagas en la boutique al recoger: efectivo, tarjeta o transferencia.'
+    : order.mode === 'domicilio' ? 'Pagas al recibir el domicilio: efectivo o transferencia.' : 'Un asesor te escribe por WhatsApp para coordinar el pago antes del despacho.';
+  const card = (val, ico, title, text) => `<label class="deliv ${order.pay === val ? 'on' : ''}"><input type="radio" name="pay" value="${val}" ${order.pay === val ? 'checked' : ''}>
+    <span class="deliv-ico">${icon(ico)}</span><span class="deliv-txt"><b>${title}</b><small>${text}</small></span></label>`;
+  return `<div class="deliv-list" role="radiogroup" aria-label="Forma de pago">
+    ${card('ahora', 'qr', 'Pagar ahora en línea', 'Con Bre-B o el QR de Bancolombia, desde tu banco o billetera.')}
+    ${card('persona', 'users', 'Pagar en persona o con asesoría', persona)}
+  </div>
+  ${order.pay === 'ahora' ? `<div class="paybox">
+    ${pm.demo ? '<p class="pay-demo">Datos de ejemplo · todavía no transfieras</p>' : ''}
+    <div class="pay-amount"><span>Valor a pagar</span><strong>${money(total)}</strong><button class="link" data-copy="${total}">Copiar valor</button></div>
+    <div class="pay-grid">
+      <figure class="pay-qr"><div id="pay-qr" aria-label="Código QR de pago">${pm.qrImage ? `<img src="${pm.qrImage}" alt="QR de pago Bancolombia">` : ''}</div>
+        ${pm.demo ? '<span class="pay-stamp">Ejemplo</span>' : ''}<figcaption>QR Bancolombia<br><small>Escanéalo desde tu app</small></figcaption></figure>
+      <div class="pay-key"><span>Llave Bre-B</span><b>${esc(pm.breb)}</b><button class="btn btn-sm" data-copy="${esc(pm.breb)}">Copiar llave</button>
+        <small>A nombre de ${esc(pm.holder)}. Funciona desde Bancolombia, Nequi, Daviplata y las demás entidades de Bre-B.</small></div>
+    </div>
+    <ol class="pay-steps"><li>Paga ${money(total)} desde tu app.</li><li>Toma una captura del comprobante.</li><li>Envía el pedido y adjunta la captura en el chat de WhatsApp.</li></ol>
+    ${order.mode === 'envio' ? '<p class="help">El envío es un valor estimado: si el valor real cambia, te devolvemos o te cobramos la diferencia.</p>' : ''}
+    <label class="check paid"><input type="checkbox" id="o-paid" ${order.paid ? 'checked' : ''}> Ya hice el pago</label>
+  </div>` : ''}`;
+}
+
 function stepDetails(ls, sh, total) {
   return `<div class="details">
     <label>Tu nombre<input id="o-name" value="${esc(order.name)}" autocomplete="name" required></label>
@@ -262,6 +293,7 @@ function stepDetails(ls, sh, total) {
     <dl class="recap">
       <div><dt>Prendas</dt><dd>${ls.map(l => `${l.p.name} · ${l.size}${l.qty > 1 ? ' ×' + l.qty : ''}`).join('<br>')}</dd></div>
       <div><dt>Entrega</dt><dd>${sh ? `${sh.name}${order.mode === 'envio' ? ` · ${esc(order.city)}, ${esc(order.dep)}` : ''}` : 'Por confirmar'}</dd></div>
+      <div><dt>Pago</dt><dd>${order.pay === 'ahora' ? `En línea${order.paid ? ' · ya pagado' : ''}` : 'En persona o con asesor'}</dd></div>
       <div><dt>Total</dt><dd><b>${money(total)}</b></dd></div>
     </dl>
   </div>`;
@@ -275,6 +307,13 @@ function wireCart(dlg, ls, sh, total) {
   $$('[data-del]', dlg).forEach(b => b.onclick = () => { cart.splice(b.dataset.del, 1); write(); renderCart(); renderScore(); });
   $$('[name=mode]', dlg).forEach(r => r.onchange = () => { order.mode = r.value; if (r.value === 'envio' && order.dep === 'Tolima' && order.city === 'Ibagué') { order.dep = 'Bogotá D.C.'; order.city = 'Bogotá'; } renderCart(); });
   $$('[name=carrier]', dlg).forEach(r => r.onchange = () => { order.carrier = r.value; renderCart(); });
+  $$('[name=pay]', dlg).forEach(r => r.onchange = () => { order.pay = r.value; renderCart(); });
+  $('#o-paid', dlg)?.addEventListener('change', e => { order.paid = e.target.checked; });
+  $$('[data-copy]', dlg).forEach(b => b.onclick = async () => {
+    try { await navigator.clipboard.writeText(b.dataset.copy); toast('Copiado'); } catch { toast(b.dataset.copy); }
+  });
+  const qr = $('#pay-qr', dlg);
+  if (qr && window.qrcode) { const q = window.qrcode(0, 'M'); q.addData(CONFIG.payments.qrText); q.make(); qr.innerHTML = q.createSvgTag({ cellSize: 4, margin: 0, scalable: true }); }
   $('#dep', dlg)?.addEventListener('change', e => { order.dep = e.target.value; order.city = ''; renderCart(); $('#city')?.focus(); });
   $('#city', dlg)?.addEventListener('change', e => { order.city = e.target.value; renderCart(); });
   $('#o-gift', dlg)?.addEventListener('change', e => { keep(); order.gift = e.target.checked; renderCart(); });
@@ -283,19 +322,32 @@ function wireCart(dlg, ls, sh, total) {
   $('#cart-next', dlg)?.addEventListener('click', () => {
     keep();
     if (step === 2 && order.mode === 'envio' && !order.city.trim()) { $('#city')?.focus(); return toast('Escribe la ciudad de destino', 'err'); }
-    if (step < 3) { step++; renderCart(); $('.cart-body', dlg).scrollTop = 0; return; }
+    if (step < 4) { step++; renderCart(); $('.cart-body', dlg).scrollTop = 0; return; }
     if (!order.name.trim()) { $('#o-name').focus(); return toast('Escribe tu nombre para enviar el pedido', 'err'); }
     if (order.mode !== 'recoger' && !order.address.trim()) { $('#o-addr').focus(); return toast('Escribe la dirección de entrega', 'err'); }
-    const msg = [`Hola ${STORE.name}, quiero hacer este pedido:`, '',
-      ...ls.map((l, i) => `${i + 1}. ${l.code}-${l.size} · ${l.p.brand} ${l.p.name} · ${l.p.color} · Talla ${l.size} × ${l.qty} · ${money(priceOf(l.p) * l.qty)}`), '',
-      `Subtotal: ${money(subtotal())}`,
-      `Entrega: ${sh.name}${order.mode === 'envio' ? ` a ${order.city}, ${order.dep} (estimado ${money(sh.cost)})` : sh.cost ? ` (${money(sh.cost)})` : ''}`,
-      `Total: ${money(total)}`, '', `Nombre: ${order.name}`,
-      order.mode !== 'recoger' ? `Dirección: ${order.address}` : '',
-      order.gift ? `\nEs un regalo para ${order.to || '(sin nombre)'}.\nMensaje de la tarjeta: "${order.message}"` : '',
-      order.notes ? `Notas: ${order.notes}` : ''].filter(Boolean).join('\n');
-    open(wa(msg), '_blank', 'noopener');
+    sent = buildOrder(ls.map(l => ({ code: l.code, size: l.size, qty: l.qty, price: priceOf(l.p), list: l.p.price, name: l.p.name, brand: l.p.brand, color: l.p.color })),
+      sh, { ...order, name: order.name.trim() });
+    open(wa(orderText(sent)), '_blank', 'noopener');
+    renderCart();
   });
+}
+
+// La solicitud quedó lista: número, resumen y accesos a WhatsApp y a la carta de pedido.
+function renderSent(dlg) {
+  const o = sent;
+  dlg.innerHTML = `<div class="cart">
+    <header class="cart-head"><div class="cart-top"><h2>Solicitud lista</h2><button class="x" data-close aria-label="Cerrar">${X}</button></div></header>
+    <div class="cart-body sent">
+      <img src="assets/brand/cocodrilo-cabeza-verde.svg" alt="" width="84" height="84">
+      <p class="sent-no">Pedido N.º ${o.n}</p>
+      <h3>Gracias, ${esc(o.c.split(' ')[0])}.</h3>
+      <p>${o.p?.m === 'ahora' && o.p.ok ? 'Abrimos WhatsApp con tu solicitud. <b>Adjunta allí la captura del comprobante de pago</b> y la boutique confirma tu pedido.' : 'Abrimos WhatsApp con tu solicitud para enviarla a la boutique. Allí te confirmamos disponibilidad, pago y entrega.'}</p>
+      <dl class="recap"><div><dt>Prendas</dt><dd>${o.i.reduce((a, x) => a + x[2], 0)}</dd></div><div><dt>Entrega</dt><dd>${esc(o.e.s)}</dd></div><div><dt>Total</dt><dd><b>${money(o.T)}</b></dd></div></dl>
+      <a class="btn btn-brass btn-block" href="${wa(orderText(o))}" target="_blank" rel="noopener">${icon('whatsapp')}Abrir WhatsApp de nuevo</a>
+      <a class="btn btn-block" href="${cardURL(o)}" target="_blank" rel="noopener">${icon('receipt')}Ver mi carta de pedido</a>
+      <button class="link" id="sent-done">Vaciar el pedido y seguir viendo la colección</button>
+    </div></div>`;
+  $('#sent-done', dlg).onclick = () => { sent = null; cart = []; step = 1; write(); renderScore(); dlg.close(); };
 }
 
 // ---------- eventos ----------

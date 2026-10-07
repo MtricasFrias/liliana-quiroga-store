@@ -1,0 +1,61 @@
+/* Carta de pedido: papel marfil sobre terciopelo, lista para imprimir o guardar en PDF. */
+body { background: var(--v-900); }
+.desk { min-height: 100svh; padding: clamp(24px, 5vw, 64px) 16px 48px; display: grid; justify-items: center; align-content: start; gap: 22px; }
+.letter {
+  width: min(760px, 100%); padding: clamp(28px, 6vw, 64px) clamp(20px, 6vw, 68px) clamp(28px, 5vw, 48px);
+  background: #FFFDF8; border-radius: 6px; box-shadow: inset 0 0 0 10px #FFFDF8, inset 0 0 0 11px var(--brass), 0 40px 90px -40px rgba(0, 0, 0, .8);
+}
+.lt-head { display: grid; justify-items: center; gap: 8px; text-align: center; padding-bottom: 26px; }
+.lt-head img { width: 88px; }
+.lt-house { font-size: .74rem; letter-spacing: .3em; text-transform: uppercase; color: var(--brass-lo); }
+.lt-head h1 { font-size: clamp(2.4rem, 7vw, 3.6rem); letter-spacing: -.015em; }
+.lt-head h1 em { color: var(--brass-lo); }
+.lt-meta { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 28px; margin: 14px 0 0; }
+.lt-meta div { display: grid; gap: 2px; }
+.lt-meta dt, .lt-sec h2, .lt-total dt { font: 500 .66rem/1.3 var(--font-text); letter-spacing: .22em; text-transform: uppercase; color: var(--muted); }
+.lt-meta dd { margin: 0; font-size: .94rem; }
+.lt-sec { padding: 22px 0; box-shadow: inset 0 1px 0 #ECE4D3; }
+.lt-sec h2 { margin-bottom: 12px; }
+.lt-items { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.lt-items li { display: grid; grid-template-columns: 64px 1fr auto; gap: 16px; align-items: center; }
+.lt-art { width: 64px; height: 72px; display: grid; place-items: center; background: #fff; }
+.lt-art svg, .lt-art img { width: 100%; height: 100%; object-fit: contain; }
+.lt-dot { width: 22px; height: 22px; border-radius: 50%; background: var(--c); box-shadow: inset 0 0 0 1px rgba(19, 36, 27, .25); }
+.lt-desc { display: grid; gap: 2px; }
+.lt-desc b { font: 400 1.18rem/1.2 var(--font-display); }
+.lt-desc small { color: var(--ink-2); font-size: .86rem; }
+.lt-ref { color: var(--muted) !important; font-size: .76rem !important; letter-spacing: .06em; }
+.lt-ref em { font-style: normal; color: var(--alert); }
+.lt-amt { display: grid; justify-items: end; gap: 2px; white-space: nowrap; }
+.lt-amt small { color: var(--muted); font-size: .78rem; }
+.lt-amt s { color: var(--muted); font-size: .82rem; }
+.lt-amt b { font-weight: 500; }
+.lt-two { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 22px; }
+.lt-two p { color: var(--ink-2); font-size: .94rem; }
+.lt-strong { color: var(--ink) !important; font-weight: 500; }
+.lt-gift { margin: 0; padding: 16px 18px; background: var(--ivory); border-radius: 4px; text-align: center; }
+.lt-to { font-size: .66rem; letter-spacing: .22em; text-transform: uppercase; color: var(--brass-lo); }
+.lt-gift blockquote { margin: 8px 0 0; font: italic 400 1.1rem/1.4 var(--font-display); overflow-wrap: anywhere; }
+.lt-total { margin: 0; padding: 18px 0 6px; display: grid; gap: 6px; box-shadow: inset 0 1px 0 #ECE4D3; }
+.lt-total div { display: flex; justify-content: space-between; align-items: baseline; }
+.lt-total dd { margin: 0; }
+.lt-total .grand { padding-top: 10px; margin-top: 4px; box-shadow: inset 0 1px 0 var(--ink); }
+.lt-total .grand dt { color: var(--ink); }
+.lt-total .grand dd { font: 400 2rem/1 var(--font-display); }
+.lt-note { margin-top: 18px; padding: 12px 16px; border-radius: 4px; background: var(--ivory); color: var(--ink-2); font-size: .86rem; text-align: center; }
+.lt-foot { margin-top: 22px; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 18px; font-size: .76rem; color: var(--muted); text-align: center; }
+.letter-actions { width: min(760px, 100%); display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+.letter-actions .ico { width: 18px; height: 18px; }
+@media (max-width: 520px) {
+  .lt-items li { grid-template-columns: 52px 1fr; }
+  .lt-art { width: 52px; height: 60px; }
+  .lt-amt { grid-column: 2; justify-items: start; }
+  .letter-actions .btn { flex: 1 1 100%; }
+}
+@media print {
+  @page { size: A4; margin: 12mm; }
+  body { background: #fff; }
+  .desk { padding: 0; }
+  .letter { box-shadow: none; padding: 0; width: 100%; }
+  .letter-actions { display: none; }
+}
