@@ -1,5 +1,10 @@
-// Ilustraciones planas (ficha técnica) por silueta, teñidas con el color de la referencia.
-// Se usan mientras la tienda no suba la foto real de la prenda.
+// Ilustraciones planas por silueta, colgadas de un gancho de latón y teñidas con el color de la referencia.
+// Se usan mientras la tienda no suba la foto real de la prenda en gancho.
+import { colorHex } from './data.js';
+
+// Gancho de latón: queda detrás de los hombros, solo se ven el gancho y el cuello.
+const HANGER = `<g class="hanger" fill="none" stroke-linecap="round"><path d="M200 50V22C200 6 214 -2 226 2C238 6 240 22 228 28" stroke="#B8924A" stroke-width="5"/>
+  <path d="M104 80L200 46L296 80" stroke="#C8A35A" stroke-width="7" stroke-linejoin="round"/></g>`;
 
 const hex2rgb = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
 const lum = h => { const [r, g, b] = hex2rgb(h); return (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255; };
@@ -55,7 +60,7 @@ export function garmentSVG(p) {
   const m = p.model || '';
   const key = m.startsWith('camisa') ? 'camisa' : m === 'gorra' ? 'gorra' : m === 'sueter' ? 'sueter'
     : m === 'camiseta' ? 'camiseta' : m === 'polo-mujer' ? 'polo-mujer' : m === 'polo-mujer-mc' ? 'polo-mujer-mc' : 'polo';
-  const c = p.hex || '#888888';
+  const c = p.hex || colorHex(p.color);
   const dark = lum(c) < 0.18;
   const d = dark ? shade(c, 0.22) : shade(c, -0.28);
   const label = `${p.name}, color ${p.color}`;
@@ -81,7 +86,7 @@ export function garmentSVG(p) {
     <path d="M200 40V150" stroke="${d}" stroke-width="3"/><path d="M200 40V150" stroke="${shade(c, dark ? 0.5 : 0.3)}" stroke-width="1" stroke-dasharray="2 2"/>
     <rect x="196" y="148" width="8" height="16" rx="3" fill="#C9B27C"/>` : '';
   const cuffs = (s.cuffs || []).map(dd => `<path d="${dd}" stroke="${p.trim || d}" stroke-width="${p.trim ? 3 : 1.5}" fill="none"/>`).join('');
-  return `<svg viewBox="30 20 340 420" role="img" aria-label="${label}" xmlns="http://www.w3.org/2000/svg">
+  return `<svg class="hang" viewBox="30 -12 340 452" role="img" aria-label="${label}" xmlns="http://www.w3.org/2000/svg">${HANGER}
   <path d="${s.body}" fill="${c}" stroke="${d}" stroke-width="1.5" stroke-linejoin="round"/>${stripes}
   <path d="${s.seams}" stroke="${d}" stroke-width="1.3" fill="none" opacity=".75"/>
   ${cuffs}${rib}${crew}${zip}${s.collar ? shirtTop(c, d, p.trim) : ''}${placket}${shirt}
@@ -89,7 +94,8 @@ export function garmentSVG(p) {
 }
 
 function cap(c, d, label) {
-  return `<svg viewBox="0 40 380 380" role="img" aria-label="${label}" xmlns="http://www.w3.org/2000/svg">
+  return `<svg class="hang" viewBox="0 30 380 390" role="img" aria-label="${label}" xmlns="http://www.w3.org/2000/svg">
+  <g fill="none" stroke-linecap="round"><path d="M250 136V60C250 46 262 40 272 44" stroke="#B8924A" stroke-width="5"/><circle cx="250" cy="58" r="7" fill="#C8A35A" stroke="none"/></g>
   <path d="M122 296C120 200 182 142 250 142C318 142 352 214 346 300Q234 318 122 296Z" fill="${c}" stroke="${d}" stroke-width="1.5"/>
   <path d="M250 142C224 196 214 250 220 308M250 142C286 192 300 246 300 304M250 142C200 168 160 220 146 290" stroke="${d}" stroke-width="1.3" fill="none" opacity=".8"/>
   <path d="M126 290C84 292 40 306 22 326C62 344 128 340 178 314Q150 300 126 290Z" fill="${c}" stroke="${d}" stroke-width="1.5" stroke-linejoin="round"/>
