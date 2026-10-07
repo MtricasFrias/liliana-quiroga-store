@@ -224,30 +224,17 @@ body { background: var(--ivory); }
 .photo-now figure { margin: 0; display: grid; gap: 4px; justify-items: center; font-size: .76rem; color: var(--muted); }
 .photo-now img { width: 90px; height: 100px; object-fit: contain; background: var(--ivory); border-radius: 10px; }
 
-/* ---------- Comprobante ---------- */
-.receipt-dlg { width: min(880px, calc(100% - 24px)); }
-.rc-wrap { display: grid; grid-template-columns: 1fr 300px; }
-.rc { padding: 34px 32px; display: grid; justify-items: center; gap: 6px; background: #FFFDF8; }
-.rc > img { width: 96px; }
-.rc h2 { font-size: 1.7rem; }
-.rc-addr { font-size: .78rem; color: var(--muted); text-align: center; }
-.rc-meta { width: 100%; display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px 16px; margin: 16px 0 6px; padding: 12px 0; box-shadow: inset 0 1px 0 #E8E0CF, inset 0 -1px 0 #E8E0CF; }
-.rc-meta dt { font-size: .6rem; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
-.rc-meta dd { margin: 0; font-size: .9rem; }
-.rc-items { width: 100%; list-style: none; margin: 0; padding: 0; }
-.rc-items li { display: flex; justify-content: space-between; gap: 14px; padding: 9px 0; }
-.rc-items li + li { box-shadow: inset 0 1px 0 #EFE8D9; }
-.rc-items b { display: block; font-weight: 500; font-size: .92rem; }
-.rc-items small { color: var(--muted); font-size: .78rem; }
-.rc-amt { display: grid; justify-items: end; white-space: nowrap; font-weight: 500; }
-.rc-amt s { color: var(--muted); font-weight: 400; font-size: .8rem; }
-.rc-total { width: 100%; display: flex; justify-content: space-between; align-items: baseline; margin-top: 8px; padding-top: 12px; box-shadow: inset 0 1.5px 0 var(--ink); }
-.rc-total b { font: 400 1.9rem var(--font-display); }
-.rc-thanks { margin-top: 14px; font: italic 400 1.2rem var(--font-display); }
-.rc-social { font-size: .82rem; color: var(--ink-2); text-align: center; }
-.rc-legal { font-size: .7rem; color: var(--muted); margin-top: 8px; }
+/* ---------- Comprobante (la tira está en tira.css) ---------- */
+.receipt-dlg { width: min(880px, calc(100% - 24px)); overflow-x: hidden; }
+.rc-x { position: absolute; top: 12px; right: 12px; z-index: 2; }
+.rc-wrap { display: grid; grid-template-columns: 1fr 310px; }
+.rc-desk { display: grid; place-items: center; padding: 36px 24px; background: var(--v-900); }
 .rc-actions { padding: 26px 22px; display: grid; gap: 12px; align-content: start; background: var(--ivory); }
+.rc-actions h2 { font-size: 1.5rem; padding-right: 40px; }
+.rc-opt { margin-top: -6px; font-size: .86rem; color: var(--ink-2); }
+.rc-actions .help { margin-top: -4px; }
 .rc-actions .ico { width: 18px; height: 18px; }
+.rc-actions .btn { padding: 0 14px; letter-spacing: .1em; white-space: normal; text-align: center; line-height: 1.2; }
 
 /* ---------- Etiquetas ---------- */
 .label-sheet { display: grid; grid-template-columns: repeat(auto-fill, 60mm); gap: 4mm; }
@@ -281,6 +268,8 @@ body { background: var(--ivory); }
   .ticket { max-height: 28vh; }
   .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .rc-wrap { grid-template-columns: 1fr; }
+  .rc-actions { order: -1; }
+  .rc-desk { padding: 28px 16px; }
 }
 @media (max-width: 600px) {
   .form-grid { grid-template-columns: 1fr; }
@@ -300,11 +289,5 @@ body { background: var(--ivory); }
   .side, .view-head, .no-print, #toast { display: none !important; }
   .app { display: block; }
   .view { padding: 0; }
-  body.printing-receipt .app { display: none; }
-  body.printing-receipt .receipt-dlg { position: static; width: 100%; box-shadow: none; }
-  body.printing-receipt .rc-actions { display: none; }
-  body.printing-receipt .rc-wrap { grid-template-columns: 1fr; }
 }
 
-.receipt-dlg { overflow-x: hidden; }
-.rc-actions .btn { padding: 0 14px; letter-spacing: .1em; white-space: normal; text-align: center; line-height: 1.2; }

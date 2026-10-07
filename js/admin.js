@@ -6,6 +6,7 @@ import { $, $$, esc, toast, download, shrinkImage, icon, X, LINKS, STORE, wa, ti
 // Ejecuta un cambio y, si la base lo rechaza, muestra el motivo.
 const act = async (fn, ok) => { try { await fn(); if (ok) toast(ok); return true; } catch (e) { toast(e.message, 'err'); return false; } };
 import { barChart, hBars } from './charts.js';
+import { tiraHTML, tiraText, tiraPDF } from './tira.js';
 
 // ---------- acceso ----------
 // ponytail: PIN validado en el navegador, solo para la vista previa. Con backend real se reemplaza por login del servidor.
@@ -239,46 +240,39 @@ async function openScanner() {
 }
 
 // ==================== COMPROBANTE ====================
-function receiptText(s) {
-  return [`*${STORE.name}* · Comprobante N.º ${String(s.no).padStart(4, '0')}`, new Date(s.at).toLocaleString('es-CO'), '',
-    ...s.items.map(i => `${i.qty} × ${i.brand} ${i.name} · ${i.color} · Talla ${i.size} · ${money(i.price * i.qty)}${i.price < i.list ? ` (antes ${money(i.list * i.qty)})` : ''}`), '',
-    `*Total: ${money(s.total)}* · ${s.method}`, '', 'Gracias por elegirnos.',
-    `Califícanos en Google: ${LINKS.maps}`, `Instagram: ${LINKS.instagram}`, `Facebook: ${LINKS.facebook}`].join('\n');
-}
-
+// Opcional: el PDF se prepara solo al abrir; si el cliente no lo quiere, se cierra sin enviar.
 function showReceipt(s) {
   const dlg = $('#receipt');
   const c = s.customer || {};
-  const phone = (c.phone || '').replace(/\D/g, '');
-  dlg.innerHTML = `<div class="rc-wrap">
-    <article class="rc" id="rc">
-      <img src="assets/brand/lq-medallon.svg" alt="" width="84" height="84">
-      <h2>${STORE.name}</h2><p class="rc-addr">${STORE.address} · WhatsApp ${STORE.phone}</p>
-      <dl class="rc-meta"><div><dt>Comprobante</dt><dd>N.º ${String(s.no).padStart(4, '0')}</dd></div><div><dt>Fecha</dt><dd>${new Date(s.at).toLocaleString('es-CO', { dateStyle: 'medium', timeStyle: 'short' })}</dd></div>
-        ${c.name ? `<div><dt>Cliente</dt><dd>${esc(c.name)}</dd></div>` : ''}<div><dt>Pago</dt><dd>${s.method}</dd></div></dl>
-      <ol class="rc-items">${s.items.map(i => `<li><span><b>${esc(i.brand)} ${esc(i.name)}</b><small>${esc(i.color)} · Talla ${i.size} · ${i.code}${i.qty > 1 ? ` · ${i.qty} × ${money(i.price)}` : ''}</small></span>
-        <span class="rc-amt">${i.price < i.list ? `<s>${money(i.list * i.qty)}</s>` : ''}${money(i.price * i.qty)}</span></li>`).join('')}</ol>
-      <p class="rc-total"><span>Total</span><b>${money(s.total)}</b></p>
-      <p class="rc-thanks">Gracias por elegirnos.</p>
-      <p class="rc-social">Califícanos en Google Maps y síguenos en Instagram y Facebook.</p>
-      <p class="rc-legal">Este comprobante no reemplaza la factura electrónica.</p>
-    </article>
+  const pdf = tiraPDF(s); pdf.catch(() => {});
+  const canShare = !!navigator.canShare?.({ files: [new File([''], 'a.pdf', { type: 'application/pdf' })] });
+  dlg.innerHTML = `<button class="x rc-x" type="button" data-close aria-label="Cerrar sin enviar">${X}</button>
+  <div class="rc-wrap">
+    <div class="rc-desk"><article class="rc">${tiraHTML(s)}</article></div>
     <div class="rc-actions">
-      <label>WhatsApp del cliente<input id="rc-phone" inputmode="tel" value="${esc(c.phone || '')}" placeholder="300 123 4567"></label>
-      <button class="btn btn-brass btn-block" id="rc-wa">${icon('whatsapp')}Enviar por WhatsApp</button>
-      <label>Correo del cliente<input id="rc-mail" type="email" value="${esc(c.email || '')}" placeholder="cliente@correo.com"></label>
+      <h2>¿Enviar comprobante?</h2>
+      <p class="rc-opt">Es opcional. Si el cliente no lo quiere, cierra sin enviar.</p>
+      ${canShare ? `<button class="btn btn-brass btn-block" id="rc-share">${icon('share')}Enviar PDF</button><p class="help">Elige WhatsApp, Gmail u otra app: el PDF va adjunto.</p>` : ''}
+      <label>WhatsApp del cliente<input id="rc-phone" type="tel" inputmode="tel" autocomplete="off" value="${esc(c.phone || '')}" placeholder="300 123 4567"></label>
+      <button class="btn ${canShare ? '' : 'btn-brass'} btn-block" id="rc-wa">${icon('whatsapp')}Enviar por WhatsApp</button>
+      <label>Correo del cliente<input id="rc-mail" type="email" autocomplete="off" value="${esc(c.email || '')}" placeholder="cliente@correo.com"></label>
       <button class="btn btn-block" id="rc-email">${icon('mail')}Enviar por correo</button>
-      <button class="btn btn-block" id="rc-print">${icon('print')}Imprimir o guardar PDF</button>
-      <button class="link" type="button" data-close>Cerrar</button>
+      <p class="help">WhatsApp y correo llevan el detalle y el enlace al PDF.</p>
+      <button class="btn btn-block" id="rc-pdf">${icon('download')}Descargar PDF</button>
+      <button class="btn btn-dark btn-block" type="button" data-close>Cerrar sin enviar</button>
     </div></div>`;
+  const file = async () => { try { return await pdf; } catch (e) { toast(e.message, 'err'); } };
+  if (canShare) $('#rc-share').onclick = async () => {
+    const f = await file();
+    if (f) navigator.share({ files: [f], title: f.name, text: `Tu comprobante de compra en ${STORE.name}.` }).catch(e => e.name === 'AbortError' || toast('No se pudo compartir el PDF', 'err'));
+  };
   $('#rc-wa').onclick = () => {
     const n = $('#rc-phone').value.replace(/\D/g, '');
-    open(wa(receiptText(s), n ? (n.length === 10 ? '57' + n : n) : ''), '_blank', 'noopener');
+    open(wa(tiraText(s), n ? (n.length === 10 ? '57' + n : n) : ''), '_blank', 'noopener');
   };
-  $('#rc-email').onclick = () => { location.href = `mailto:${encodeURIComponent($('#rc-mail').value.trim())}?subject=${encodeURIComponent(`Tu compra en ${STORE.name}`)}&body=${encodeURIComponent(receiptText(s).replace(/\*/g, ''))}`; };
-  $('#rc-print').onclick = () => { document.body.classList.add('printing-receipt'); print(); document.body.classList.remove('printing-receipt'); };
-  $('[data-close]', dlg).onclick = () => dlg.close();
-  if (!phone) $('#rc-phone').focus();
+  $('#rc-email').onclick = () => { location.href = `mailto:${encodeURIComponent($('#rc-mail').value.trim())}?subject=${encodeURIComponent(`Tu comprobante de compra · ${STORE.name}`)}&body=${encodeURIComponent(tiraText(s).replace(/\*/g, ''))}`; };
+  $('#rc-pdf').onclick = async () => { const f = await file(); if (f) download(f.name, f, f.type); };
+  $$('[data-close]', dlg).forEach(b => b.onclick = () => dlg.close());
   dlg.showModal();
 }
 
@@ -627,7 +621,7 @@ function drawLabels() {
   const perUnit = $('#per-unit')?.checked;
   const items = [...labelPick].map(db.find).filter(Boolean).flatMap(p => db.sizesOf(p).flatMap(s => Array(perUnit ? Math.max(0, p.stock[s]) : 1).fill([p, s])));
   const qr = text => { if (!window.qrcode) return ''; const q = window.qrcode(0, 'M'); q.addData(text); q.make(); return q.createSvgTag({ cellSize: 2, margin: 0, scalable: true }); };
-  $('#sheet').innerHTML = items.map(([p, s]) => `<article class="tag"><header><img src="assets/brand/lq.svg" alt=""><span>Liliana Quiroga</span></header>
+  $('#sheet').innerHTML = items.map(([p, s]) => `<article class="tag"><header><img src="assets/brand/lq-medallon.svg" alt=""><span>Liliana Quiroga</span></header>
     <div class="tag-code">${p.code}<span>${s}</span></div><div class="tag-qr">${qr(`${p.code}-${s}`)}</div>
     <p class="tag-name">${esc(p.brand)} · ${esc(p.name)}<br>${esc(p.color)}</p><p class="tag-price">${money(p.price)}</p></article>`).join('');
 }

@@ -6,7 +6,8 @@ Vista previa del sitio de Liliana Quiroga Store, boutique multimarca en Ibagué 
 |---|---|---|
 | `index.html` | Clientes | Portada, colección con filtros, Colección Privada, ficha de cada prenda, pedido por pasos (prendas, entrega, datos y tarjeta de regalo) que se envía por WhatsApp, y la boutique con mapa. |
 | `admin.html` | Solo los dueños (no está enlazada en la tienda) | Vender, Hoy, Inventario, Descuentos, Finanzas, Redes, Etiquetas y Ajustes. |
-| `marca.html` | Equipo y diseñadores | Kit de marca: poses del cocodrilo, logotipo, colores, tipografías e imágenes para redes. |
+| `marca.html` | Equipo y diseñadores | Kit de marca: medallón LQ, logotipos, portadas, historias, publicaciones, destacadas, etiquetas, tarjetas, manual en PDF y PDF para imprenta (`assets/brand/kit/`). |
+| `recibo.html` | Cliente | Comprobante de compra en tira que abre el cliente desde WhatsApp o el correo, con botón para descargar el PDF. |
 
 > **Dos modos.** Mientras `js/config.js` no tenga la conexión, los datos viven en cada navegador (vista previa, con ocho prendas de ejemplo). Con la conexión a Supabase, todos los equipos comparten inventario, ventas y compras en vivo.
 
@@ -24,7 +25,7 @@ A001-M
 
 ## Panel
 
-- **Vender:** prendas en mosaico con buscador y filtros; un toque en la prenda y otro en la talla. Al cobrar sale un **comprobante** que se envía por WhatsApp o correo, o se imprime/guarda en PDF, con los enlaces a Google Maps, Instagram y Facebook. No reemplaza la factura electrónica de la DIAN.
+- **Vender:** prendas en mosaico con buscador y filtros; un toque en la prenda y otro en la talla. Al cobrar se ofrece un **comprobante en tira** (opcional, se cierra sin enviar): el PDF se arma solo y se comparte adjunto (WhatsApp, Gmail…), o va por WhatsApp/correo con el detalle y el enlace al PDF, con QR para calificar en Google. No reemplaza la factura electrónica de la DIAN.
 - **Hoy:** lo vendido en el día (por tipo de prenda, marca y medio de pago), la ganancia y lo gastado en mercancía. Se puede consultar cualquier día.
 - **Acceso:** en vista previa con un PIN; con la base compartida, con correo y contraseña de administrador.
 - **Inventario:** unidades por talla editables, costo, precio, margen, fotos (en gancho y con modelo IA), Colección Privada y «Entrada de mercancía». Toda unidad nueva queda registrada como compra a su costo.

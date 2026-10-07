@@ -6,142 +6,117 @@
 <meta name="robots" content="noindex, nofollow">
 <title>Kit de marca · Liliana Quiroga Store</title>
 <meta name="theme-color" content="#0A1712">
+<meta property="og:image" content="assets/brand/kit/redes/perfil-instagram-facebook-whatsapp.png">
 <link rel="icon" href="assets/brand/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/base.css">
 <style>
-  .kit-hero { background: var(--v-900); color: var(--ivory); padding: clamp(56px, 8vw, 110px) var(--gutter); display: grid; justify-items: center; gap: 22px; text-align: center; }
-  .kit-hero img { width: min(520px, 90%); }
-  .kit-hero h1 { font-size: clamp(2.6rem, 6vw, 4.8rem); }
+  .kit-hero { background: var(--v-900); color: var(--ivory); padding: clamp(56px, 8vw, 110px) var(--gutter); display: grid; justify-items: center; gap: 20px; text-align: center; }
+  .kit-hero img { width: min(200px, 50%); }
+  .kit-hero h1 { font-size: clamp(2.6rem, 6vw, 4.6rem); }
   .kit-hero h1 em { color: var(--brass-hi); }
-  .kit-hero p { max-width: 54ch; color: var(--v-200); font-weight: 300; }
+  .kit-hero p { max-width: 56ch; color: var(--v-200); font-weight: 300; }
+  .kit-hero nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 8px; }
   .kit { max-width: 1280px; margin: 0 auto; padding: clamp(56px, 7vw, 100px) var(--gutter); display: grid; gap: clamp(56px, 7vw, 96px); }
   .kit h2 { font-size: clamp(2rem, 4vw, 3.2rem); margin-bottom: 10px; }
-  .kit .intro { color: var(--ink-2); max-width: 62ch; margin-bottom: 28px; font-weight: 300; }
-  .poses { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 18px; }
-  .pose { border-radius: 20px; overflow: hidden; background: #fff; display: grid; }
-  .pose-art { aspect-ratio: 4 / 3; display: grid; place-items: center; padding: 26px; }
-  .pose-art.dark { background: var(--v-900); }
-  .pose-art.light { background: var(--paper); }
-  .pose-art img { max-width: 100%; max-height: 100%; }
-  .pose-txt { padding: 16px 18px 18px; display: grid; gap: 4px; }
-  .pose-txt b { font: 400 1.25rem var(--font-display); }
-  .pose-txt small { color: var(--muted); }
-  .pose-txt a { justify-self: start; margin-top: 6px; font-size: .82rem; }
-  .lockups { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 18px; }
-  .lockup { border-radius: 20px; padding: 40px 30px; display: flex; align-items: center; justify-content: center; gap: 24px; }
-  .lockup.dark { background: var(--v-900); color: var(--ivory); }
-  .lockup.light { background: #fff; }
-  .lockup img { width: 160px; }
-  .lockup .wm { display: grid; gap: 8px; }
-  .lockup .wm b { font: 400 2.6rem/1 var(--font-display); }
-  .lockup .wm b em { color: var(--brass-hi); }
-  .lockup.light .wm b em { color: var(--brass-lo); }
-  .lockup .wm small { font-size: .66rem; letter-spacing: .32em; text-transform: uppercase; color: var(--brass-hi); }
-  .lockup.light .wm small { color: var(--brass-lo); }
-  .lockup.stack { flex-direction: column; text-align: center; }
-  .colors { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 12px; }
-  .sw { border-radius: 18px; overflow: hidden; background: #fff; }
-  .sw i { display: block; height: 110px; background: var(--c); }
+  .kit h2 em { color: var(--brass-lo); }
+  .kit h3 { font: 500 .72rem var(--font-text); letter-spacing: .26em; text-transform: uppercase; color: var(--brass-lo); margin: 34px 0 14px; }
+  .kit .intro { color: var(--ink-2); max-width: 62ch; margin-bottom: 26px; font-weight: 300; }
+  .gal { display: grid; grid-template-columns: repeat(auto-fill, minmax(var(--min, 220px), 1fr)); gap: 18px; align-items: start; }
+  .gal figure { margin: 0; display: grid; gap: 10px; }
+  .gal .art { border-radius: 16px; overflow: hidden; display: grid; place-items: center; background: #fff; box-shadow: 0 0 0 1px #E6DECD; }
+  .gal .art.dark { background: var(--v-900); box-shadow: none; }
+  .gal .art.pad { display: block; padding: 28px; aspect-ratio: 4 / 3; }
+  .gal .art.pad img { width: 100%; height: 100%; object-fit: contain; }
+  .gal .art img { max-width: 100%; max-height: 100%; }
+  .gal figcaption { display: grid; gap: 2px; font-size: .86rem; color: var(--ink-2); }
+  .gal figcaption b { font: 400 1.12rem var(--font-display); color: var(--ink); }
+  .gal figcaption span { display: flex; flex-wrap: wrap; gap: 4px 14px; }
+  .gal figcaption a { font-size: .8rem; }
+  .colors { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
+  .sw { border-radius: 16px; overflow: hidden; background: #fff; box-shadow: inset 0 0 0 1px #E6DECD; }
+  .sw i { display: block; height: 96px; background: var(--c); }
   .sw div { padding: 12px 14px; display: grid; }
   .sw b { font-weight: 500; }
   .sw small { color: var(--muted); font-size: .8rem; }
   .types { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr)); gap: 18px; }
   .type { background: #fff; border-radius: 20px; padding: 28px; display: grid; gap: 8px; }
-  .type .big1 { font: 400 3.4rem/1 var(--font-display); }
+  .type .big1 { font: 400 3.2rem/1 var(--font-display); }
   .type .big1 em { color: var(--brass-lo); }
   .type .big2 { font: 400 1.4rem/1.3 var(--font-text); letter-spacing: .02em; }
   .type small { color: var(--muted); }
-  .social { display: grid; grid-template-columns: 1fr 1fr 2fr; gap: 18px; align-items: start; }
-  .social figure { margin: 0; display: grid; gap: 10px; }
-  .social img { width: 100%; border-radius: 14px; }
-  .social figcaption { display: flex; justify-content: space-between; gap: 8px; font-size: .86rem; color: var(--ink-2); }
-  .rules { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 14px; list-style: none; padding: 0; margin: 0; }
+  .rules { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 14px; list-style: none; padding: 0; margin: 0; }
   .rules li { background: #fff; border-radius: 18px; padding: 20px; color: var(--ink-2); }
   .rules li b { display: block; color: var(--ink); font: 400 1.2rem var(--font-display); margin-bottom: 6px; }
-  @media (max-width: 760px) { .social { grid-template-columns: 1fr 1fr; } .social figure:last-child { grid-column: 1 / -1; } .lockup { flex-direction: column; text-align: center; } }
 </style>
 </head>
 <body>
 <header class="kit-hero">
-  <img src="assets/brand/lq-medallon.svg" alt="Medallón LQ de Liliana Quiroga Store" width="220" height="220" style="width:min(220px,55%)">
+  <img src="assets/brand/lq-medallon.svg" alt="Medallón LQ de Liliana Quiroga Store" width="200" height="200">
   <h1>Kit de marca · <em>Liliana Quiroga</em></h1>
-  <p>El monograma LQ, el medallón y el cocodrilo coronado en sus poses. Siempre en latón sobre terciopelo verde, o en verde sobre marfil.</p>
+  <p>Todo lo necesario para actualizar las redes e imprimir: logos, portadas, historias, publicaciones, destacadas, etiquetas y tarjetas. Un solo LQ, el medallón, igual en todas partes.</p>
+  <nav>
+    <a class="btn btn-brass" href="assets/brand/kit/Manual-de-marca-Liliana-Quiroga-Store.pdf" download>Manual de marca (PDF)</a>
+    <a class="btn btn-ghost-light" href="assets/brand/kit/impresos/impresos-para-imprenta.pdf" download>Impresos para imprenta (PDF)</a>
+  </nav>
 </header>
 
-<main class="kit">
-  <section>
-    <h2>El monograma LQ</h2>
-    <p class="intro">Liliana Quiroga en dos letras: la L recta y la Q en itálica, con su cola caligráfica, cruzadas con un corte fino. Va en la barra de la web, el ícono de la pestaña, la portada (grabado en el terciopelo), el comprobante, la carta de pedido y las etiquetas.</p>
-    <div class="poses">
-      <article class="pose"><div class="pose-art light"><img src="assets/brand/lq.svg" alt=""></div><div class="pose-txt"><b>Monograma</b><small>Verde sobre marfil o blanco.</small><a href="assets/brand/lq.svg" download>Descargar verde</a><a href="assets/brand/lq-marfil.svg" download>Descargar marfil</a></div></article>
-      <article class="pose"><div class="pose-art dark"><img src="assets/brand/lq-laton.svg" alt=""></div><div class="pose-txt"><b>Monograma en latón</b><small>Sobre terciopelo: barra superior, portada, empaques.</small><a href="assets/brand/lq-laton.svg" download>Descargar latón</a></div></article>
-      <article class="pose"><div class="pose-art light"><img src="assets/brand/lq-medallon.svg" alt=""></div><div class="pose-txt"><b>Medallón LQ</b><small>Foto de perfil, comprobantes, carta de pedido, bolsas, stickers y tarjetas de regalo.</small><a href="assets/brand/lq-medallon.svg" download>Descargar medallón</a></div></article>
-    </div>
-  </section>
+<main class="kit" id="kit"></main>
 
-  <section>
-    <h2>El cocodrilo en sus poses</h2>
-    <p class="intro">No es un dibujo que se estira o se recorta: cada pose tiene su uso. Descarga los archivos en SVG, se ven nítidos a cualquier tamaño.</p>
-    <div class="poses">
-      <article class="pose"><div class="pose-art dark"><img src="assets/brand/cocodrilo-laton.svg" alt=""></div><div class="pose-txt"><b>Paseo · logo principal</b><small>Encabezado de la web, letreros, empaques, firma de correos.</small><a href="assets/brand/cocodrilo-laton.svg" download>Descargar latón</a><a href="assets/brand/cocodrilo.svg" download>Descargar verde</a></div></article>
-      <article class="pose"><div class="pose-art dark"><img src="assets/brand/cocodrilo-ascenso.svg" alt=""></div><div class="pose-txt"><b>Ascenso</b><small>En diagonal, subiendo: historias, publicaciones de lanzamiento, Colección Privada.</small><a href="assets/brand/cocodrilo-ascenso.svg" download>Descargar latón</a><a href="assets/brand/cocodrilo-ascenso-verde.svg" download>Descargar verde</a></div></article>
-      <article class="pose"><div class="pose-art dark"><img src="assets/brand/cocodrilo-cabeza.svg" alt=""></div><div class="pose-txt"><b>Medallón</b><small>Variante del cocodrilo para piezas pequeñas y bordados.</small><a href="assets/brand/cocodrilo-cabeza.svg" download>Descargar latón</a><a href="assets/brand/cocodrilo-cabeza-verde.svg" download>Descargar verde</a></div></article>
-      <article class="pose"><div class="pose-art light"><img src="assets/brand/favicon.svg" alt="" style="width:96px"></div><div class="pose-txt"><b>Ícono LQ</b><small>Pestaña del navegador y accesos directos en el celular.</small><a href="assets/brand/favicon.svg" download>Descargar ícono</a></div></article>
-    </div>
-  </section>
+<script type="module">
+// Galería del kit: cada pieza con su archivo listo para descargar.
+const K = 'assets/brand/kit/';
+const fig = ([file, title, note, cls = '', extra = '']) => `<figure><div class="art ${cls}"><img src="${K}${file}" alt="${title}" loading="lazy"></div>
+  <figcaption><b>${title}</b>${note ? `<small>${note}</small>` : ''}<span><a href="${K}${file}" download>Descargar PNG</a>${extra}</span></figcaption></figure>`;
+const svg = f => `<a href="${K}logos/${f}" download>SVG</a>`;
+const sec = (title, intro, groups) => `<section><h2>${title}</h2><p class="intro">${intro}</p>${groups}</section>`;
+const gal = (items, min, sub = '') => `${sub ? `<h3>${sub}</h3>` : ''}<div class="gal" style="--min:${min}">${items.map(fig).join('')}</div>`;
 
-  <section>
-    <h2>Logotipo</h2>
-    <p class="intro">El cocodrilo acompaña al nombre en Bodoni, con «Quiroga» en itálica dorada. Debajo, en mayúsculas espaciadas: Boutique multimarca · Ibagué.</p>
-    <div class="lockups">
-      <div class="lockup dark"><img src="assets/brand/cocodrilo-laton.svg" alt=""><div class="wm"><b>Liliana <em>Quiroga</em></b><small>Boutique multimarca · Ibagué</small></div></div>
-      <div class="lockup light stack"><img src="assets/brand/cocodrilo.svg" alt=""><div class="wm"><b>Liliana <em>Quiroga</em></b><small>Boutique multimarca · Ibagué</small></div></div>
-    </div>
-  </section>
-
-  <section>
-    <h2>Colores</h2>
-    <p class="intro">Tres materiales y nada más: terciopelo verde, marfil y latón.</p>
-    <div class="colors">
-      <div class="sw" style="--c:#0A1712"><i></i><div><b>Terciopelo</b><small>#0A1712</small></div></div>
-      <div class="sw" style="--c:#133022"><i></i><div><b>Verde botella</b><small>#133022</small></div></div>
-      <div class="sw" style="--c:#C8A35A"><i></i><div><b>Latón</b><small>#C8A35A</small></div></div>
-      <div class="sw" style="--c:#E3C88E"><i></i><div><b>Latón claro</b><small>#E3C88E</small></div></div>
-      <div class="sw" style="--c:#F6F2E8"><i></i><div><b>Marfil</b><small>#F6F2E8</small></div></div>
-      <div class="sw" style="--c:#FBF9F3"><i></i><div><b>Papel</b><small>#FBF9F3</small></div></div>
-    </div>
-  </section>
-
-  <section>
-    <h2>Tipografías</h2>
-    <div class="types">
-      <div class="type"><span class="big1">Hecho para <em>ser visto.</em></span><b>Bodoni Moda</b><small>Títulos, nombres de prenda, el nombre de la marca. Gratis en Google Fonts.</small></div>
-      <div class="type"><span class="big2">Lacoste · Hugo Boss · Colección Privada</span><b>Jost</b><small>Textos, botones, precios y etiquetas. Gratis en Google Fonts.</small></div>
-    </div>
-  </section>
-
-  <section>
-    <h2>Para redes</h2>
-    <p class="intro">Listas para subir: foto de perfil, historia y portada de Facebook.</p>
-    <div class="social">
-      <figure><img src="assets/brand/png/avatar.png" alt="Foto de perfil con el medallón LQ" loading="lazy"><figcaption>Perfil 1080 × 1080<a href="assets/brand/png/avatar.png" download>Descargar</a></figcaption></figure>
-      <figure><img src="assets/brand/png/historia.png" alt="Historia con el cocodrilo en ascenso" loading="lazy"><figcaption>Historia 1080 × 1920<a href="assets/brand/png/historia.png" download>Descargar</a></figcaption></figure>
-      <figure><img src="assets/brand/png/portada.png" alt="Portada de Facebook" loading="lazy"><figcaption>Portada de Facebook 1640 × 624<a href="assets/brand/png/portada.png" download>Descargar</a></figcaption></figure>
-    </div>
-  </section>
-
-  <section>
-    <h2>Cómo usarlo</h2>
-    <ul class="rules">
-      <li><b>Espacio</b>Deja alrededor del cocodrilo al menos el alto de su corona. Nunca lo encierres en cajas.</li>
-      <li><b>Fondo</b>Latón sobre terciopelo o verde sobre marfil. Sobre fotos, solo en zonas lisas.</li>
-      <li><b>Fotos de producto</b>La prenda sola, en gancho o doblada, sobre blanco. Las fotos con modelo van aparte.</li>
-      <li><b>Lo que no</b>No cambies sus colores, no lo deformes, no le agregues sombras ni lo pongas a mirar a la derecha.</li>
-    </ul>
-  </section>
-</main>
+document.getElementById('kit').innerHTML = [
+  sec('El medallón <em>LQ</em>', 'Es el único LQ de la marca. Va completo en la foto de perfil, la web, los comprobantes, las etiquetas y los empaques. No se usan las letras sueltas.', gal([
+    ['logos/medallon-lq.png', 'Medallón LQ', 'Fondo transparente, 2000 px.', 'dark pad', svg('medallon-lq.svg')],
+    ['redes/perfil-instagram-facebook-whatsapp.png', 'Foto de perfil', 'Instagram, Facebook y WhatsApp · 1080 × 1080.'],
+  ], '260px')),
+  sec('Logotipos', 'Fondo transparente en alta resolución. «Fondo oscuro» lleva letras claras; «fondo claro», letras verdes.', gal([
+    ['logos/logo-principal-fondo-oscuro.png', 'Principal · fondo oscuro', '', 'dark pad'],
+    ['logos/logo-principal-fondo-claro.png', 'Principal · fondo claro', '', 'pad'],
+    ['logos/logo-horizontal-fondo-oscuro.png', 'Horizontal · fondo oscuro', '', 'dark pad'],
+    ['logos/logo-horizontal-fondo-claro.png', 'Horizontal · fondo claro', '', 'pad'],
+    ['logos/insignia-fondo-oscuro.png', 'Insignia · fondo oscuro', 'Cocodrilo y medallón, sin el nombre.', 'dark pad'],
+    ['logos/insignia-fondo-claro.png', 'Insignia · fondo claro', '', 'pad'],
+    ['logos/cocodrilo-laton.png', 'Cocodrilo en latón', 'Mira siempre a la izquierda.', 'dark pad', svg('cocodrilo-laton.svg')],
+    ['logos/cocodrilo-verde.png', 'Cocodrilo en verde', 'Para fondos claros.', 'pad', svg('cocodrilo-verde.svg')],
+  ], '280px')),
+  sec('Para <em>redes</em>', 'Listas para subir. En las historias, el contenido respeta las zonas que tapan los botones de Instagram.',
+    gal([['redes/portada-facebook.png', 'Portada de Facebook', '1640 × 624'], ['redes/portada-google-youtube.png', 'Portada Google / YouTube', '1920 × 1080 · perfil de empresa en Google Maps']], '340px', 'Portadas')
+    + gal([['redes/historia-bienvenida.png', 'Bienvenida', '1080 × 1920'], ['redes/historia-nueva-pieza.png', 'Nueva pieza', 'Ejemplo con una prenda del catálogo'], ['redes/historia-plantilla.png', 'Plantilla', 'Pon la foto de la prenda encima del marco']], '200px', 'Historias')
+    + gal([['redes/post-bienvenida.png', 'Bienvenida', '1080 × 1350'], ['redes/post-coleccion-privada.png', 'Colección Privada', ''], ['redes/post-envios.png', 'Envíos', ''], ['redes/post-visitanos.png', 'Visítanos', ''], ['redes/post-nueva-pieza.png', 'Nueva pieza', ''], ['redes/post-plantilla.png', 'Plantilla', 'Base para Canva']], '200px', 'Publicaciones')
+    + gal(['novedades', 'hombre', 'mujer', 'privada', 'envios', 'boutique', 'pedidos', 'resenas'].map(k => [`redes/destacadas/destacada-${k}.png`, { novedades: 'Novedades', hombre: 'Hombre', mujer: 'Mujer', privada: 'Colección Privada', envios: 'Envíos', boutique: 'La boutique', pedidos: 'Pedidos', resenas: 'Reseñas' }[k], '']), '130px', 'Portadas de destacadas')),
+  sec('Impresos', 'A 300 dpi y tamaño real. El PDF para imprenta trae todas las piezas, una por página.', gal([
+    ['impresos/etiqueta-colgante-frente.png', 'Etiqueta colgante · frente', '5 × 9 cm'],
+    ['impresos/etiqueta-colgante-reverso.png', 'Etiqueta colgante · reverso', 'Referencia, talla, color y precio'],
+    ['impresos/tarjeta-presentacion-frente.png', 'Tarjeta de presentación · frente', '9 × 5 cm'],
+    ['impresos/tarjeta-presentacion-reverso.png', 'Tarjeta de presentación · reverso', 'QR a Google Maps'],
+    ['impresos/tarjeta-regalo-frente.png', 'Tarjeta de regalo · frente', '8,5 × 5,5 cm'],
+    ['impresos/tarjeta-regalo-reverso.png', 'Tarjeta de regalo · reverso', ''],
+    ['impresos/tarjeta-gracias.png', 'Tarjeta de agradecimiento', '10 × 15 cm · va dentro del paquete'],
+    ['impresos/sticker-gracias.png', 'Sticker', '5 cm · para sellar bolsas y cajas'],
+    ['impresos/etiqueta-envio.png', 'Rótulo de envío', '10 × 15 cm'],
+  ], '220px')),
+  `<section><h2>Colores</h2><p class="intro">Tres materiales y nada más: terciopelo verde, marfil y latón.</p><div class="colors">${[
+    ['Terciopelo', '#0A1712'], ['Verde botella', '#133022'], ['Verde medallón', '#1B5239'], ['Latón', '#C8A35A'], ['Latón claro', '#E3C88E'], ['Latón oscuro', '#7D6230'], ['Marfil', '#F6F2E8'], ['Papel', '#FBF9F3'],
+  ].map(([n, h]) => `<div class="sw" style="--c:${h}"><i></i><div><b>${n}</b><small>${h}</small></div></div>`).join('')}</div></section>`,
+  `<section><h2>Tipografías</h2><div class="types">
+    <div class="type"><span class="big1">Hecho para <em>ser visto.</em></span><b>Bodoni Moda</b><small>Títulos, nombres de prenda y el nombre de la marca. Gratis en Google Fonts y en Canva.</small></div>
+    <div class="type"><span class="big2">Lacoste · Hugo Boss · Colección Privada</span><b>Jost</b><small>Textos, botones, precios y etiquetas. Gratis en Google Fonts y en Canva.</small></div></div></section>`,
+  `<section><h2>Cómo usarlo</h2><ul class="rules">
+    <li><b>Un solo LQ</b>El medallón completo. No uses las letras sueltas ni lo redibujes.</li>
+    <li><b>Espacio</b>Deja libre alrededor al menos una quinta parte de su ancho. Mínimo 12 mm impreso y 40 px en pantalla.</li>
+    <li><b>Fondo</b>Latón sobre terciopelo o verde sobre marfil. Sobre fotos, solo en zonas lisas.</li>
+    <li><b>Lo que no</b>No cambies colores, no lo deformes y no pongas el cocodrilo a mirar a la derecha.</li></ul></section>`,
+].join('');
+</script>
 </body>
 </html>

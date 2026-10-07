@@ -46,6 +46,7 @@ function piece(p, big = false) {
     <div class="info">
       <h3>${esc(p.name)}</h3>
       <p class="meta">${esc(p.brand)}<span aria-hidden="true">·</span>${esc(p.color)}</p>
+      ${p.fabric ? `<p class="fab">${esc(p.fabric)}</p>` : ''}
       ${priceHTML(p)}
     </div>
   </article>`;
@@ -108,6 +109,12 @@ function openProduct(code, size = null, view = null) {
       <h2>${esc(p.name)}</h2>
       <p class="pd-meta">${esc(p.brand)} · ${esc(p.color)}</p>
       <p class="pd-price">${priceHTML(p)}${activeDiscount(p) ? `<span class="pd-save">Precio especial hasta el ${activeDiscount(p).until ? new Date(activeDiscount(p).until + 'T12:00').toLocaleDateString('es-CO', { day: 'numeric', month: 'long' }) : 'agotar existencias'}</span>` : ''}</p>
+      <dl class="pd-facts">
+        <div><dt>Tela</dt><dd>${esc(p.fabric) || '—'}</dd></div>
+        <div><dt>Ajuste</dt><dd>${esc(p.fit) || '—'}</dd></div>
+        <div><dt>Línea</dt><dd>${p.gender}</dd></div>
+        ${(p.details || []).length ? `<div class="wide"><dt>Detalles</dt><dd>${p.details.map(esc).join(' · ')}</dd></div>` : ''}
+      </dl>
       ${siblings.length > 1 ? `<fieldset class="pd-colors"><legend>Color · <b>${esc(p.color)}</b></legend><div>
         ${siblings.map(x => `<button class="swatch" style="--c:${colorHex(x.color)}" data-sib="${x.code}" aria-pressed="${x.code === p.code}" aria-label="${esc(x.color)}${db.totalStock(x) ? '' : ' (agotado)'}" ${db.totalStock(x) ? '' : 'data-out'}></button>`).join('')}</div></fieldset>` : ''}
       <fieldset class="pd-sizes"><legend>Talla</legend>
@@ -118,14 +125,7 @@ function openProduct(code, size = null, view = null) {
         <button class="btn btn-dark btn-block" id="pd-add" ${pick ? '' : 'disabled'}>${db.totalStock(p) ? 'Agregar al pedido' : 'Agotado'}</button>
         <a class="btn btn-block" target="_blank" rel="noopener" href="${wa(`Hola, quiero ${p.exclusive ? 'reservar' : 'asesoría con'} la pieza ${p.code} (${p.brand} ${p.name}, ${p.color}).`)}">${icon('whatsapp')}${p.exclusive ? 'Reservar por WhatsApp' : 'Asesoría por WhatsApp'}</a>
       </div>
-      <dl class="spec">
-        <div><dt>Marca</dt><dd>${esc(p.brand)}</dd></div>
-        <div><dt>Tela</dt><dd>${esc(p.fabric)}</dd></div>
-        <div><dt>Ajuste</dt><dd>${esc(p.fit)}</dd></div>
-        <div><dt>Línea</dt><dd>${p.gender}</dd></div>
-        ${(p.details || []).length ? `<div><dt>Detalles</dt><dd>${p.details.map(esc).join(' · ')}</dd></div>` : ''}
-        ${p.care ? `<div><dt>Cuidado</dt><dd>${esc(p.care)}</dd></div>` : ''}
-      </dl>
+      ${p.care ? `<p class="pd-care"><b>Cuidado</b>${esc(p.care)}</p>` : ''}
     </div></div>`;
   let chosen = pick;
   $$('[data-size]', dlg).forEach(b => b.onclick = () => {
@@ -286,7 +286,7 @@ function stepDetails(ls, sh, total) {
     ${order.gift ? `<div class="gift">
       <label>Para<input id="o-to" value="${esc(order.to)}" placeholder="Nombre de quien lo recibe"></label>
       <label>Mensaje de la tarjeta<textarea id="o-msg" rows="3" maxlength="240" placeholder="Escribe tu mensaje">${esc(order.message)}</textarea></label>
-      <div class="card-preview" aria-label="Vista previa de la tarjeta"><img src="assets/brand/lq.svg" alt="" width="44" height="42">
+      <div class="card-preview" aria-label="Vista previa de la tarjeta"><img src="assets/brand/lq-medallon.svg" alt="" width="44" height="44">
         <p class="cp-to">${order.to ? 'Para ' + esc(order.to) : 'Para alguien especial'}</p><p class="cp-msg" id="cp-msg">${esc(order.message) || 'Tu mensaje aparecerá aquí.'}</p><p class="cp-from">Liliana Quiroga Store</p></div>
     </div>` : ''}
     <label>Notas (opcional)<input id="o-notes" value="${esc(order.notes)}" placeholder="Horario de entrega, referencias…"></label>
